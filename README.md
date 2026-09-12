@@ -308,7 +308,10 @@ The web interface exposes the support pipeline as an auditable workflow rather t
 
 ### Benchmark & Proof
 ![Benchmark & Proof](docs/screenshots/benchmark-proof.png)
-*Quantitative evaluation scorecard displaying headline safety, retrieval, intent, and human-validation metrics.*
+*Quantitative evaluation scorecard displaying 4 key state metrics (Safety, Retrieval, Intent, Validation) and comparison against Baseline 1 and Baseline 2.*
+
+![Benchmark Details](docs/screenshots/benchmark-proof-details.png)
+*Research insight analysis explaining headline trade-offs, 12-point LLM-as-judge rubric, and 60-sample human calibration agreement.*
 
 ### Failure Post-Mortem
 ![Failure Post-Mortem](docs/screenshots/failure-postmortem.png)
