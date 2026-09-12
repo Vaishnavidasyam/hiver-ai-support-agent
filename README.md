@@ -201,10 +201,9 @@ The LLM judge was calibrated against **60 blind human annotations** ([`evaluatio
 - **Escalation Safety Recall:** **96.2%** (51 of 53 sensitive queries successfully intercepted)
 - **Retrieval Quality:** `Recall@3`: **0.6250** \| `Recall@5`: **0.6950** \| `Recall@10`: **0.6950** \| `MRR`: **0.5443**
 - **Human vs. Judge Validation (60 Samples):**
-  - Spearman Rank Correlation: $\mathbf{
-ho = 0.7632}$ ($p = 1.84 	imes 10^{-12}$)
-  - Weighted Cohen's Kappa: $\mathbf{\kappa = 0.6575}$
-  - Close Agreement Rate ($\pm 1$ point): **81.7%**
+  - Spearman Rank Correlation: **ρ = 0.7632** (p = 1.84 × 10⁻¹²)
+  - Weighted Cohen's Kappa: **κ = 0.6575** (Substantial Agreement)
+  - Close Agreement Rate (±1 point): **81.7%**
 - **Inference Latency:** **18.4 ms** (average local CPU pipeline latency excluding network transmission)
 
 ---
@@ -292,7 +291,10 @@ The web interface exposes the support pipeline as an auditable workflow rather t
 
 ### Triage Console
 ![Triage Console](docs/screenshots/triage-console.png)
-*Interactive query testing console with real-world presets, 6-stage linear pipeline stepper, 3 independent gate metrics, and structured decision engine output.*
+*Interactive query testing console showing @AmazonHelp brand lockup, 6 alternating presets, 3 independent gate metrics, and structured decision engine output.*
+
+![Historical Precedents](docs/screenshots/triage-console-evidence.png)
+*Grounded resolution evidence viewer displaying top-5 historical precedents retrieved via FAISS vector search with cosine similarity.*
 
 ### Benchmark & Proof
 ![Benchmark & Proof](docs/screenshots/benchmark-proof.png)
