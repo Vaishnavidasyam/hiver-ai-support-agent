@@ -1,19 +1,34 @@
-# Evidence-Grounded AI Support Agent (`@AmazonHelp`)
+# Evidence-Grounded AI Support Agent — @AmazonHelp
 
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg)](https://fastapi.tiangolo.com)
-[![FAISS](https://img.shields.io/badge/Vector%20Search-FAISS-purple.svg)](https://github.com/facebookresearch/faiss)
-[![Tests](https://img.shields.io/badge/pytest-10%2F10%20passed-brightgreen.svg)](tests/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+> Hiver SDE Intern — Take-Home Assignment
 
-> **Hiver SDE Intern — Take-Home Assignment Submission**  
-> **Candidate:** Vaishnavi Dasyam ([@Vaishnavidasyam](https://github.com/Vaishnavidasyam))  
-> **Repository:** [https://github.com/Vaishnavidasyam/hiver-ai-support-agent](https://github.com/Vaishnavidasyam/hiver-ai-support-agent)  
-> **Core Principle:** *"Turn a messy real-world dataset into a working AI system and prove it works. The proof is worth more than the system."*
+An evidence-grounded customer-support agent that understands customer intent, retrieves relevant historical resolutions, checks evidence sufficiency, and decides whether to auto-handle or escalate.
+
+`Understand → Retrieve → Verify → Decide → Reply`
+
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![FAISS](https://img.shields.io/badge/FAISS-CPU%20Index-00599C.svg)](https://github.com/facebookresearch/faiss)
+[![Golden Set](https://img.shields.io/badge/Golden%20Set-200%20Cases-9BE83F.svg?color=101510&labelColor=1A2E05)](data/golden/golden_set.json)
+[![Tests](https://img.shields.io/badge/Tests-10%2F10%20Passed-9BE83F.svg)](tests/)
 
 ---
 
-## 📑 Table of Contents
+### At a glance
+
+| Metric / Dimension | Value |
+|---|---|
+| **Target Brand** | `@AmazonHelp` (E-Commerce & Retail Logistics) |
+| **Support Intents** | 10 Derived Classes (including explicit `unknown_ambiguous`) |
+| **Golden Set** | 200 Hand-Labelled Cases (0% Test/Index Leakage) |
+| **Historical Precedents** | 8,000 Index Cases (`all-MiniLM-L6-v2` dense vectors) |
+| **Retrieval Engine** | FAISS CPU (`IndexFlatIP` Cosine Similarity) |
+| **Safety Interceptors** | Hardcoded policies for Account Security and Payment Disputes |
+| **Evaluation Framework** | Classification (Macro F1) + Retrieval (Recall@k, MRR) + Reply (12-pt Rubric) + Safety (FAHR) |
+
+---
+
+## Table of Contents
 1. [Project Overview](#1-project-overview)
 2. [Problem & Objective](#2-problem--objective)
 3. [Solution / How It Works](#3-solution--how-it-works)
@@ -26,7 +41,7 @@
 10. [Engineering Decision Log](#10-engineering-decision-log)
 11. [One-Week Roadmap](#11-one-week-roadmap)
 12. [Product Interface & Walkthrough](#12-product-interface--walkthrough)
-13. [Technology Stack](#13-technology-stack)
+13. [Technology Stack & Repository Structure](#13-technology-stack--repository-structure)
 14. [Quick Start (< 15-Minute Reproduction)](#14-quick-start--15-minute-reproduction)
 15. [Limitations, What We Chose Not to Build & Author](#15-limitations-what-we-chose-not-to-build--author)
 
@@ -34,309 +49,322 @@
 
 ## 1. Project Overview
 
-Customer support AI systems in production frequently fail because they act as black-box generative models: they classify intent, hallucinate answers, and auto-reply without verifying if historical precedent actually exists.
+Production customer-support automation cannot afford black-box generative behavior. When customer inquiries involve financial transactions, lost shipments, or account compromises, generating an ungrounded or incorrect reply damages user trust and incurs significant operational cost.
 
-This project delivers an **evidence-grounded customer support pipeline** for **`@AmazonHelp`** (the highest-volume e-commerce handle in the 3M Kaggle Twitter dataset). Built around the philosophy that **"support should think before it replies"**, the agent:
-- Understands customer intent from noisy real-world tweets.
-- Retrieves and consensus-checks historical brand resolutions via FAISS vector search.
-- Verifies evidence sufficiency before allowing automated replies.
-- Enforces strict deterministic risk gates that escalate sensitive queries (account takeovers, unauthorized card charges, ambiguous complaints) with an explicit, auditable reason code.
+This repository implements an **evidence-grounded customer-support pipeline** built for **`@AmazonHelp`**, derived from the 3M Kaggle Twitter Customer Support dataset. Rather than relying on end-to-end generative models, the system decouples triage into discrete, verifiable decisions:
+- Classifies incoming messages against 10 domain-specific intent prototypes.
+- Retrieves the top-5 historical resolution precedents from an in-memory FAISS index.
+- Verifies that retrieved precedents exhibit consensus and high semantic similarity before proceeding.
+- Routes high-risk categories (billing disputes, account access) through deterministic safety gates.
+- Emits structured decisions: **`AUTO_HANDLE`** with a precedent-grounded draft, or **`ESCALATE`** with a machine-readable reason code.
+
+> *"A confident prediction is not enough to justify automation."*
 
 ---
 
 ## 2. Problem & Objective
 
 ### The Challenge
-Real Twitter customer support threads are noisy, terse, emotionally charged, and filled with acronyms, broken syntax, and sarcasm. Conventional single-prompt LLM agents suffer from:
-1. **Unchecked Hallucinations**: Fabricating return timelines, fake refund promises, or nonexistent courier tracking statuses.
-2. **Catastrophic Unsafe Automations**: Auto-replying with a generic help link when a customer's account has been compromised or money has been stolen.
-3. **Evaluation Deception**: Optimizing for high intent classification accuracy (Macro F1) while ignoring that the model auto-handles high-risk financial disputes.
+Customer support interactions on Twitter/X represent an inherently noisy operational domain:
+- **Terse and Fragmented Input:** Messages frequently lack context (e.g., *"Still waiting. Hello??"*).
+- **Multi-Intent Complexity:** Single tweets combine tracking inquiries with unauthorized charge disputes.
+- **Safety-Critical Stakes:** Inappropriate automation on account theft or payment errors creates regulatory and financial liability.
+- **Knowledge Drift:** Historical support procedures evolve over time (e.g., printable return labels vs. modern drop-off QR codes).
 
-### Core Objectives
-1. **Zero Unsafe Automations**: Prioritize the **False Auto-Handle Rate (FAHR)** as the primary safety metric (target < 5%).
-2. **Strict Grounding**: Every drafted response must cite or directly adapt proven historical `@AmazonHelp` resolution precedents.
-3. **Auditability & Explainability**: Every decision must produce an explicit machine-readable reason code (`STRONG_EVIDENCE`, `SENSITIVE_ACCOUNT_SECURITY`, `FINANCIAL_DISPUTE`, `AMBIGUOUS_QUERY`).
-4. **Reproducibility**: Complete headline benchmark reproduction locally in under **15 seconds** without external cloud dependencies or API keys.
+### Assignment Objectives
+The system addresses three core deliverables:
+1. **Intent Classification:** Map incoming messages into a calibrated set of intents derived from the empirical dataset.
+2. **Grounded Reply Drafting:** Draft responses reflecting historical brand resolution behavior without fabricating policies or tracking numbers.
+3. **Automated Escalation Decision:** Determine whether each message can safely be auto-handled or requires human intervention—accompanied by an explicit reason code.
 
 ---
 
 ## 3. Solution / How It Works
 
-The triage pipeline processes each incoming customer message through **6 sequential stages**:
+The triage pipeline evaluates every incoming query through six sequential stages:
 
-```mermaid
-graph LR
-    A[1. Message] --> B[2. Intent Understanding]
-    B --> C[3. Precedent Retrieval]
-    C --> D[4. Sufficiency Verification]
-    D --> E[5. Risk Assessment]
-    E --> F[6. Decision Engine]
+```
+Customer Message → Intent → Historical Evidence → Evidence Sufficiency → Risk → Decision → Reply
 ```
 
-1. **Message Preprocessing**: Normalizes Unicode, masks user PII, strips decorative marketing hashtags, and isolates the core customer inquiry.
-2. **Intent Classification**: Evaluates similarity against 10 calibrated semantic prototypes using dense transformer embeddings (`all-MiniLM-L6-v2`). Enforces a strict confidence rejection threshold (`0.58`); queries below this threshold fall back to `unknown_ambiguous`.
-3. **Precedent Retrieval**: Queries an in-memory FAISS vector index of **8,000 verified `@AmazonHelp` historical resolutions** to extract the top-5 nearest neighbor cases.
-4. **Sufficiency Verification**: Computes intent consensus across retrieved neighbors (threshold $\ge 0.60$) and verifies semantic alignment ($\ge 0.65$). If historical precedent is split or distant, evidence is flagged as insufficient.
-5. **Deterministic Risk Assessment**: Evaluates queries against non-negotiable safety policies. Keywords indicating account security, unauthorized bank charges, or PII bypass generation and route immediately to human escalation.
-6. **Decision & Reply Synthesis**:
-   - **`AUTO_HANDLE`**: Grounded reply synthesized using proven resolution guidance and signed off with `@AmazonHelp` conventions (`^AH`).
-   - **`ESCALATE`**: Human review ticket created with latency, similarity score, and stated reason code.
+```mermaid
+graph TD
+    M[Incoming Customer Message] --> I[1. Intent Classification]
+    I --> R[2. FAISS Precedent Retrieval]
+    R --> S[3. Sufficiency & Consensus Verification]
+    S --> K[4. Deterministic Risk Assessment]
+    K --> D{5. Decision Engine}
+    D -->|Sufficient Evidence + Low Risk| AH[AUTO_HANDLE: Grounded Reply Draft]
+    D -->|Insufficient Evidence OR High Risk| ES[ESCALATE: Stated Reason Code]
+```
+
+1. **Preprocessing:** Strips conversational handles and tracking noise, normalizes whitespace, and masks personal identifiable information (PII).
+2. **Intent Classification:** Encodes the message via `all-MiniLM-L6-v2` and compares cosine similarity against 10 calibrated class prototypes. Enforces a confidence threshold ($0.58$), falling back to `unknown_ambiguous` when uncertain.
+3. **Historical Evidence Retrieval:** Queries an in-memory FAISS index of 8,000 historical `@AmazonHelp` interaction pairs to surface the top-5 nearest resolution precedents.
+4. **Sufficiency Verification:** Checks that at least 60% of top-5 retrieved neighbors share the predicted intent ($\ge 0.60$ consensus) and exceed a minimum semantic similarity cutoff ($\ge 0.65$).
+5. **Risk Assessment:** Evaluates hardcoded policy rules intercepting sensitive financial terms, payment failures, or account compromise indicators.
+6. **Decision & Reply:** Outputs a structured triage record: `AUTO_HANDLE` with a precedent-grounded reply draft, or `ESCALATE` with an auditable reason code.
 
 ---
 
 ## 4. Target Brand & Intent Taxonomy
 
 ### Target Brand: `@AmazonHelp`
-- Selected from the 3M Kaggle Twitter dataset (`thoughtvector/customer-support-on-twitter`).
-- Covers high-stakes retail logistics (returns, missing parcels, subscriptions, damaged items) rather than low-friction social chatter.
-- Filtered for genuine customer-agent conversation pairs with 0% data leakage into the evaluation pool.
+`@AmazonHelp` was selected because retail e-commerce customer support requires structured, procedurally rigorous problem-solving (order tracking, return logistics, cancellation windows) rather than conversational small talk. The historical corpus provides dense coverage of routine transactional resolutions alongside distinct safety-critical edges.
 
-### Derived 10-Class Intent Taxonomy
+### Empirical 10-Class Intent Taxonomy
 
-| Intent Class | Description | Routing Policy | Precedent Example |
+| Intent Class | Description | Routing Policy | Precedent Pattern |
 |---|---|:---:|---|
-| **`delivery_delay_tracking`** | Late packages, tracking status, courier transit delays | Auto / Escalate | *"What does tracking show on your order page: [URL]?"* |
-| **`refund_return_status`** | Return shipping labels, return window, refund credit | Auto / Escalate | *"You can create a prepaid return label here: [URL]"* |
-| **`damaged_defective_wrong_item`** | Broken items, incorrect product received | Auto / Escalate | *"Please reach out via our Returns Center for a replacement: [URL]"* |
-| **`cancellation_modification`** | Cancelling orders before shipment, address change | Auto / Escalate | *"Orders can be cancelled prior to dispatch via Your Orders: [URL]"* |
-| **`payment_billing_issue`** | Double charges, failed transactions, gift card errors | **Hard Escalate** | Escalated immediately to Human Billing Team (`FINANCIAL_DISPUTE`). |
-| **`account_security_login`** | Hacked account, password reset, OTP access issues | **Hard Escalate** | Escalated immediately to Account Security Team (`SENSITIVE_ACCOUNT_SECURITY`). |
-| **`prime_membership_benefits`** | Prime renewal, Prime Video delivery perks | Auto / Escalate | *"Manage Prime membership settings here: [URL]"* |
-| **`product_stock_inquiry`** | Restock dates, merchant inventory queries | Auto / Escalate | *"Check the product detail page for third-party seller updates."* |
-| **`feedback_complaint`** | Driver behavior, packaging complaints, customer feedback | Auto / Escalate | *"We appreciate your feedback and will pass this to our logistics team."* |
-| **`unknown_ambiguous`** | Terse, fragmented, unparseable, or low-confidence queries | **Auto Escalate** | Escalated for agent clarifying question (`AMBIGUOUS_QUERY`). |
+| `delivery_delay_tracking` | Late parcels, stalled courier tracking, ETA inquiries | Conditional Auto | Check order status via confirmed tracking portal |
+| `refund_return_status` | Return labels, refund processing timelines, drop-off rules | Conditional Auto | Direct to Online Returns Center for label generation |
+| `damaged_defective_wrong_item` | Broken items, incorrect product received | Conditional Auto | Advise replacement/return workflow via order details |
+| `cancellation_modification` | Cancelling orders prior to dispatch, address changes | Conditional Auto | Direct to order management before dispatch lock |
+| `payment_billing_issue` | Double charges, failed deductions, gift card balances | **Hard Escalate** | Financial dispute: route immediately to human billing |
+| `account_security_login` | Hacked accounts, password resets, unauthorized access | **Hard Escalate** | Security incident: route immediately to account recovery |
+| `prime_membership_benefits` | Prime billing, delivery benefit eligibility | Conditional Auto | Direct to Prime account settings portal |
+| `product_stock_inquiry` | Restock timelines, seller availability | Conditional Auto | Direct to product detail page updates |
+| `feedback_complaint` | Delivery driver conduct, packaging feedback | Conditional Auto | Acknowledge feedback and route to logistics team |
+| `unknown_ambiguous` | Terse, unparseable, or low-confidence queries | **Auto Escalate** | Ambiguous query: request clarification before acting |
+
+> **Why `unknown_ambiguous` matters:** An explicit ambiguous category prevents the classifier from forcing high-confidence predictions on incomplete or fragmented inputs.
 
 ---
 
 ## 5. Safety Architecture
 
-The system decouples automated decision-making into **Three Independent Gates**:
+The architecture decouples automated decision-making into four distinct evaluative gates:
 
-```text
-┌─────────────────────────┐     ┌─────────────────────────┐     ┌─────────────────────────┐
-│       GATE 01           │     │       GATE 02           │     │       GATE 03           │
-│   Intent Confidence     │  ≠  │   Evidence Sufficiency  │  ≠  │     Risk Assessment     │
-│  (Semantic Prototype)   │     │  (Top-5 FAISS Consensus)│     │  (Policy Interceptors)  │
-└─────────────────────────┘     └─────────────────────────┘     └─────────────────────────┘
+```
+Intent Confidence ≠ Evidence Sufficiency ≠ Risk Assessment ≠ Automation Decision
 ```
 
-> **Core Safety Rule:** A high-confidence intent classification **never** bypasses an evidence check, and high evidence consensus **never** overrides a safety policy.
+A high-confidence intent classification **never** bypasses the evidence sufficiency check, and high retrieval consensus **never** overrides a safety policy.
 
-### Reason Codes & Decision Matrix
+### Decision Matrix
 
-| Reason Code | Trigger Condition | Decision Action |
+| Gate Condition | Assigned Reason Code | Action |
 |---|---|:---:|
-| **`STRONG_EVIDENCE`** | Intent Conf $\ge 0.58$ AND Top-5 Consensus $\ge 0.60$ AND Safe Policy | **`AUTO_HANDLE`** |
-| **`SENSITIVE_ACCOUNT_SECURITY`** | Intent = `account_security_login` OR keywords (hacked, password, otp) | **`ESCALATE`** |
-| **`FINANCIAL_DISPUTE`** | Intent = `payment_billing_issue` OR keywords (charged twice, unauthorized, stolen card) | **`ESCALATE`** |
-| **`INSUFFICIENT_EVIDENCE`** | Top-5 Consensus $< 0.60$ OR Mean Cosine Similarity $< 0.65$ | **`ESCALATE`** |
-| **`AMBIGUOUS_QUERY`** | Intent Conf $< 0.58$ OR Intent = `unknown_ambiguous` | **`ESCALATE`** |
+| Intent Conf $\ge 0.58$ AND Top-5 Consensus $\ge 0.60$ AND Safe Policy | `STRONG_EVIDENCE` | **`AUTO_HANDLE`** |
+| Intent Conf $< 0.58$ OR Intent = `unknown_ambiguous` | `AMBIGUOUS_QUERY` | **`ESCALATE`** |
+| Top-5 Consensus $< 0.60$ OR Mean Similarity $< 0.65$ | `INSUFFICIENT_EVIDENCE` | **`ESCALATE`** |
+| Intent = `account_security_login` OR security keywords | `SENSITIVE_ACCOUNT_SECURITY` | **`ESCALATE`** |
+| Intent = `payment_billing_issue` OR billing keywords | `FINANCIAL_DISPUTE` | **`ESCALATE`** |
+
+*Design Classification: Safety-Gated / Not Production-Ready.* Automation is restricted to routine procedural inquiries where historical consensus is clear and unambiguous.
 
 ---
 
 ## 6. System Architecture
 
-```text
-                                  [ Incoming Customer Tweet ]
-                                              │
-                                              ▼
-                             ┌─────────────────────────────────┐
-                             │    src/preprocessor.py          │
-                             │  - Strip handles & hashtags     │
-                             │  - Mask PII & sanitize URLs     │
-                             └────────────────┬────────────────┘
-                                              │
-                                              ▼
-                             ┌─────────────────────────────────┐
-                             │    src/embeddings.py            │
-                             │  - all-MiniLM-L6-v2 (384-dim)   │
-                             └────────┬───────────────┬────────┘
-                                      │               │
-                     ┌────────────────┴────┐     ┌────┴────────────────┐
-                     ▼                     │     │                     ▼
-      ┌─────────────────────────────┐      │     │      ┌─────────────────────────────┐
-      │ src/intent_classifier.py    │      │     │      │ src/retriever.py            │
-      │ - 10 Prototypes             │      │     │      │ - FAISS FlatIP (Cosine)     │
-      │ - Threshold: 0.58           │      │     │      │ - 8,000 Historical Pairs    │
-      └──────────────┬──────────────┘      │     │      └──────────────┬──────────────┘
-                     │                     │     │                     │
-                     ▼                     │     │                     ▼
-        [ Intent & Confidence ]            │     │           [ Top-5 Precedents ]
-                     │                     │     │                     │
-                     └───────────────┐     │     │     ┌───────────────┘
-                                     ▼     ▼     ▼     ▼
-                             ┌─────────────────────────────────┐
-                             │    src/evidence_layer.py        │
-                             │  - Top-5 Consensus (>= 0.60)    │
-                             │  - Mean Similarity (>= 0.65)    │
-                             └────────────────┬────────────────┘
-                                              │
-                                              ▼
-                             ┌─────────────────────────────────┐
-                             │    src/escalation_engine.py     │
-                             │  - Financial / Security Rules   │
-                             │  - Reason Code Assignment       │
-                             └────────────────┬────────────────┘
-                                              │
-                         ┌────────────────────┴────────────────────┐
-                         ▼                                         ▼
-           ┌───────────────────────────┐             ┌───────────────────────────┐
-           │        AUTO_HANDLE        │             │         ESCALATE          │
-           │  - Grounded Reply (^AH)   │             │  - Human Review Ticket    │
-           │  - Precedent Reference    │             │  - Stated Reason Code     │
-           └───────────────────────────┘             └───────────────────────────┘
+```mermaid
+graph LR
+    subgraph Ingestion
+        T[Customer Tweet] --> P[src/preprocessor.py]
+        P --> E[src/embeddings.py]
+    end
+
+    subgraph Independent Evaluation Gates
+        E -->|Query Vector| C[src/intent_classifier.py]
+        E -->|Query Vector| R[src/retriever.py]
+        C -->|Intent + Score| V[src/evidence_layer.py]
+        R -->|Top-5 Precedents| V
+        V -->|Sufficiency Status| G[src/escalation_engine.py]
+    end
+
+    subgraph Output
+        G -->|Low Risk + Consensus| AH[AUTO_HANDLE: Grounded Reply]
+        G -->|High Risk OR Low Consensus| ES[ESCALATE: Stated Reason Code]
+    end
 ```
+
+### Component Responsibilities
+
+| Component | File Path | Primary Responsibility |
+|---|---|---|
+| **Preprocessor** | [`src/preprocessor.py`](src/preprocessor.py) | PII masking, handle removal, URL sanitization |
+| **Embeddings** | [`src/embeddings.py`](src/embeddings.py) | Dense 384-dimensional text embeddings (`all-MiniLM-L6-v2`) |
+| **Intent Classifier** | [`src/intent_classifier.py`](src/intent_classifier.py) | Prototype-based classification with calibrated confidence rejection |
+| **Retriever** | [`src/retriever.py`](src/retriever.py) | In-memory FAISS vector index over 8,000 historical resolution pairs |
+| **Evidence Layer** | [`src/evidence_layer.py`](src/evidence_layer.py) | Top-5 neighbor consensus and similarity cutoff verification |
+| **Escalation Engine** | [`src/escalation_engine.py`](src/escalation_engine.py) | Hardcoded risk interceptors and reason code assignment |
+| **Reply Generator** | [`src/reply_generator.py`](src/reply_generator.py) | Synthesizes grounded responses referencing retrieved guidance |
+| **Triage Pipeline** | [`backend/pipeline.py`](backend/pipeline.py) | Unified end-to-end execution harness |
 
 ---
 
 ## 7. Evaluation Methodology
 
-### Three-Tier Evaluation Framework
+The system is evaluated through a four-tier empirical framework using a held-out **Golden Evaluation Set of 200 hand-labelled cases** ([`data/golden/golden_set.json`](data/golden/golden_set.json)). The Golden Set was sampled strictly at the conversation level from `test_pool.parquet`, maintaining **0% test/index overlap** with the 8,000 FAISS training cases (`tests/test_leakage.py` asserts zero contamination).
 
-1. **Automated Classification & Retrieval Metrics** ([`evaluation/metrics.py`](evaluation/metrics.py)):
-   - Unweighted Macro F1 across all 10 intent classes.
-   - Retrieval Recall@3, Recall@5, Recall@10, and Mean Reciprocal Rank (MRR).
-   - Escalation Safety Recall and False Auto-Handle Rate (FAHR).
+### 1. Intent Classification
+Evaluated across all 10 classes using unweighted **Macro F1**, Precision, and Recall. Macro F1 is prioritized over Accuracy to prevent common intents from masking poor performance on rare or sensitive categories.
 
-2. **LLM-as-Judge 12-Point Reply Rubric** ([`evaluation/llm_judge.py`](evaluation/llm_judge.py)):
-   - **Grounding (0–3)**: Factual alignment with historical precedents without fabrication.
-   - **Safety (0–3)**: Strict omission of unverified refund guarantees or carrier driver promises.
-   - **Actionability (0–3)**: Clear procedural guidance (order portal URL, returns hub).
-   - **Tone & Persona (0–3)**: Empathetic, polite, concise `@AmazonHelp` voice with proper sign-off.
+### 2. Retrieval Quality
+Evaluated against known relevant resolution precedents using standard ranking metrics: **Recall@3**, **Recall@5**, **Recall@10**, and **Mean Reciprocal Rank (MRR)**.
 
-3. **Human Validation Agreement Study** ([`evaluation/human_validation.py`](evaluation/human_validation.py)):
-   - 60 blind test replies evaluated independently by human annotators vs. the automated LLM judge.
-   - Computes Spearman rank correlation ($ho$), Weighted Cohen's Kappa ($\kappa$), and close agreement ($\pm 1$ point).
+### 3. Reply Quality (12-Point LLM-as-Judge Rubric)
+Replies are evaluated across four dimensions on a 0–3 scale (0–12 total) via [`evaluation/llm_judge.py`](evaluation/llm_judge.py):
+- **Grounding (0–3):** Are procedural recommendations faithful to historical brand precedents?
+- **Safety (0–3):** Does the draft omit unverified financial promises, driver ETAs, or fake refund guarantees?
+- **Actionability (0–3):** Does the customer receive an explicit next step (portal URL, account check)?
+- **Tone & Persona (0–3):** Does the response maintain a professional `@AmazonHelp` voice with standard sign-off (`^AH`)?
 
-### Golden Evaluation Dataset (200 Hand-Labelled Cases)
-- Located at [`data/golden/golden_set.json`](data/golden/golden_set.json).
-- Strictly partitioned at the **conversation thread level** from `data/processed/test_pool.parquet`.
-- **Zero test/index overlap** asserted programmatically in `tests/test_leakage.py`.
-- Balanced representation: 30 tracking, 35 returns, 25 damaged, 21 billing (escalation), 20 cancellations, 18 security (escalation), 15 Prime, 14 ambiguous (escalation), 12 stock, 10 complaints.
+### 4. Escalation Safety
+- **False Auto-Handle Rate (FAHR):** Proportion of sensitive escalation cases mistakenly marked for automation (primary safety metric).
+- **Escalation Safety Recall:** Proportion of high-risk cases successfully intercepted and escalated.
+
+### 5. Human Validation
+The LLM judge was calibrated against **60 blind human annotations** ([`evaluation/human_validation.py`](evaluation/human_validation.py)) to verify scoring alignment before relying on automated evaluation.
 
 ---
 
 ## 8. Headline Results
 
-### Comparative Benchmark (200 Golden Set Cases)
+### Comparative Benchmark — 200 Golden Set Cases
 
 | System / Model | Intent Macro F1 | Recall@5 | Reply Score (0–12) | Reply Score % | False Auto-Handle Rate | Automation Status |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Baseline 1 (Majority Class)** | 0.0261 | N/A | 9.8 / 12 | 81.4% | **100.0%** | UNSAFE |
 | **Baseline 2 (TF-IDF + LR)** | **0.7813** | N/A | 10.4 / 12 | 87.1% | **22.6%** | RISKY |
-| **Proposed Support Agent** | 0.5913 | **0.6950** | 9.0 / 12 | 75.2% | **3.8%** | **SAFETY-GATED / SAFE** |
+| **Proposed Support Agent** | 0.5913 | **0.6950** | 9.0 / 12 | 75.2% | **3.8%** | **SAFETY-GATED / NOT PRODUCTION-READY** |
 
-### Verified Summary Statistics:
-- **False Auto-Handle Rate (FAHR)**: **3.8%** (Only 2 / 53 sensitive cases mistakenly automated vs. 22.6% in Baseline 2).
-- **Escalation Safety Recall**: **96.2%** (51 / 53 high-risk cases successfully intercepted).
-- **Retrieval Performance**: `Recall@3`: **0.6250** | `Recall@5`: **0.6950** | `Recall@10`: **0.6950** | `MRR`: **0.5443**.
-- **Judge vs. Human Agreement**:
-  - Spearman Correlation: $\mathbf{ho = 0.7632}$ ($p = 1.84 	imes 10^{-12}$)
-  - Weighted Cohen's Kappa: $\mathbf{\kappa = 0.6575}$ (Substantial Agreement)
-  - Close Agreement Rate: **81.7%**
-- **Inference Latency**: **18.4 ms** average per query.
+### Key Results Summary
+- **False Auto-Handle Rate:** **3.8%** (2 out of 53 high-risk cases automated vs. 22.6% in Baseline 2)
+- **Escalation Safety Recall:** **96.2%** (51 of 53 sensitive queries successfully intercepted)
+- **Retrieval Quality:** `Recall@3`: **0.6250** \| `Recall@5`: **0.6950** \| `Recall@10`: **0.6950** \| `MRR`: **0.5443**
+- **Human vs. Judge Validation (60 Samples):**
+  - Spearman Rank Correlation: $\mathbf{ho = 0.7632}$ ($p = 1.84 	imes 10^{-12}$)
+  - Weighted Cohen's Kappa: $\mathbf{\kappa = 0.6575}$
+  - Close Agreement Rate ($\pm 1$ point): **81.7%**
+- **Inference Latency:** **18.4 ms** (average local CPU pipeline latency excluding network transmission)
 
-### ⚠️ Mandatory Section: "What is Misleading About My Headline Number?"
+---
 
-> **"Baseline 2 achieved a Macro F1 of 0.7813, whereas our Proposed Agent achieved 0.5913. Looking solely at the headline Macro F1, one might assume Baseline 2 is superior. That conclusion would be catastrophic in production."**
->
-> *"The proposed system deliberately trades closed-set classification performance for safer handling of uncertain and high-risk queries. Therefore, Macro F1 alone is an unsafe metric to evaluate automation readiness."*
+### What Is Misleading About My Headline Number?
 
-1. **Classification Accuracy $
-eq$ Customer Safety**: Baseline 2 overfits to common n-grams and blindly automates 22.6% of unauthorized billing complaints. Our agent achieves a False Auto-Handle Rate of 3.8%.
-2. **Rejection Thresholds Artificially Depress Multi-Class F1**: Falling back to `unknown_ambiguous` on borderline queries is penalized as a misclassification in standard Macro F1, even though it is the optimal operational action.
-3. **Intent Identification $
-eq$ Issue Resolution**: Identifying a tweet as `delivery_delay_tracking` does not solve a lost parcel. Precedent grounding and evidence consensus matter far more than intent prediction alone.
+> **"Baseline 2 achieved a Macro F1 of 0.7813, whereas our Proposed Agent achieved 0.5913. Looking solely at Macro F1, one might conclude Baseline 2 is superior. In a customer-facing production deployment, that conclusion would be dangerous."**
+
+1. **Classification Quality Does Not Equal Automation Safety:**
+   Baseline 2 achieved higher Macro F1 by fitting lexical n-grams to training queries. However, **Baseline 2 mistakenly auto-handled 22.6% of sensitive escalation queries**, including unauthorized payment deductions and account security compromises. Our Proposed Agent lowered this failure rate to **3.8%**, prioritizing risk mitigation over raw intent classification.
+
+2. **Rejection Thresholds Artificially Depress Multi-Class F1:**
+   Our semantic classifier enforces a deliberate confidence cutoff ($0.58$). Ambiguous, terse, or conflicting messages fall back to `unknown_ambiguous` to trigger safe human review. In multi-class scoring, this deliberate safety fallback is penalized as an intent misclassification, mechanically lowering Macro F1 while improving operational reliability.
+
+3. **Intent Classification Does Not Guarantee Resolution:**
+   Correctly tagging an incoming tweet as `delivery_delay_tracking` does not resolve the customer's problem. If a parcel was lost or stolen, sending a generic tracking link escalates customer frustration. Evidence consensus and grounded resolution precedents matter far more than classification accuracy alone.
+
+> *"For customer-support automation, classification quality and automation safety are related but distinct objectives."*
 
 ---
 
 ## 9. Failure Analysis & Post-Mortem
 
-Documented in [`reports/failure_analysis.md`](reports/failure_analysis.md) and live in Tab 2 of the Web UI:
+Five representative failure modes were observed during benchmark evaluation ([`reports/failure_analysis.md`](reports/failure_analysis.md)):
 
-| # | Incident Name | Customer Query | System Behavior | Root Cause & Architectural Fix |
-|---|---|---|---|---|
-| **01** | **Multi-Intent Overload** | *"Where is my order? Also you charged my Visa card twice!"* | Latched onto tracking tokens; risked auto-replying with tracking link. | **Fix:** Multi-label intent detection head with safety union logic. |
-| **02** | **Promotional Hashtag Bias** | *"So much for two-day transit! Still waiting #AmazonPrime"* | `#AmazonPrime` pulled embedding into Prime benefits instead of delivery delay. | **Fix:** Preprocessing regex to strip marketing hashtags before semantic encoding. |
-| **03** | **Cross-Domain Ambiguity** | *"Can I return an opened digital video purchase?"* | Sat on the boundary between physical parcel returns and digital licensing. | **Fix:** Composite dual-intent routing rules. |
-| **04** | **Terse Financial Complaint** | *"What is going on with my transaction??"* | Cosine similarity fell slightly below threshold (0.547 < 0.58) ➔ escalated as ambiguous. | **Analysis:** Safely escalated, but reason code was coarse rather than specific. |
-| **05** | **Historical Policy Drift** | *"How do I print a return shipping label?"* | Retrieved 2017 precedents instructing physical printouts instead of modern QR codes. | **Fix:** Timestamp metadata decay and procedural policy override layers. |
+### 01 — Multi-Intent Overload
+- **Observed:** Query combining an order tracking check with an unauthorized payment deduction was classified as `delivery_delay_tracking`.
+- **Expected:** `payment_billing_issue` routing to immediate human escalation.
+- **Root Cause Hypothesis:** Dominant tracking tokens diluted the financial dispute embedding.
+- **Potential Improvement:** Multi-label intent detection head with safety-union routing.
+
+### 02 — Promotional Hashtag Bias
+- **Observed:** *"So much for two-day transit! Still waiting #AmazonPrime"* classified as `prime_membership_benefits`.
+- **Expected:** `delivery_delay_tracking`.
+- **Root Cause Hypothesis:** Marketing hashtag `#AmazonPrime` biased semantic vector away from logistics.
+- **Potential Improvement:** Preprocessing regex stripping promotional hashtags before semantic encoding.
+
+### 03 — Cross-Domain Boundary Ambiguity
+- **Observed:** Query regarding returning an opened digital movie purchase produced split top-5 consensus.
+- **Expected:** Clarification on digital licensing vs. physical retail return policies.
+- **Root Cause Hypothesis:** Digital content returns span the boundary of retail returns and Prime Video policies.
+- **Potential Improvement:** Composite dual-intent routing rules for digital assets.
+
+### 04 — Terse Financial Complaint
+- **Observed:** *"What is going on with my recent transaction??"* fell back to `unknown_ambiguous`.
+- **Expected:** `payment_billing_issue` with explicit financial dispute reason code.
+- **Root Cause Hypothesis:** Extreme brevity caused cosine similarity ($0.547$) to fall below the $0.58$ confidence cutoff.
+- **Potential Improvement:** Financial keyword boosting on low-length inputs.
+
+### 05 — Historical Policy Drift
+- **Observed:** Retrieved 2017 precedent advising customer to print a paper return shipping label.
+- **Expected:** Modern guidance referencing label-free QR code drop-off at partner hubs.
+- **Root Cause Hypothesis:** Historical dataset contains deprecated procedures without timestamp decay.
+- **Potential Improvement:** Time-weighted exponential decay on retrieval candidates.
 
 ---
 
 ## 10. Engineering Decision Log
 
-15 Architecture Decision Records (ADRs) documented in [`reports/decision_log.md`](reports/decision_log.md) and Tab 3 of the Web UI:
+15 Architecture Decision Records (ADRs) documented in [`reports/decision_log.md`](reports/decision_log.md):
 
-1. **`@AmazonHelp` Focus**: High volume (81k pairs) and grounded retail logistics vs. airline weather volatility.
-2. **Conversation-Level Splitting**: Strictly partitioned threads to eliminate test-to-train retrieval leakage.
-3. **Custom Empirical 10-Class Taxonomy**: Modeled real Twitter customer intents rather than forcing the fintech Banking77 schema.
-4. **Explicit `UNKNOWN_AMBIGUOUS` Intent**: Created a dedicated intent sink to prevent nearest-neighbor hallucination on short/vague tweets.
-5. **Local FAISS-CPU Search**: Chose in-memory FAISS over cloud vector databases to eliminate API keys, latency, and rate limits during reproduction.
-6. **8,000 Verified Training Precedents**: Subsampled for dense semantic coverage and RAM < 300MB.
-7. **Three Independent Architectural Gates**: Decoupled Intent Confidence $
-eq$ Evidence Sufficiency $
-eq$ Risk Escalation so no single module can bypass safety.
-8. **Hardcoded Escalation Policies**: Programmatically forced human review for payment disputes and hacked accounts regardless of classifier confidence.
-9. **Prioritizing False Auto-Handle Rate (3.8%)**: Chose to prioritize zero unsafe automations over maximizing raw automation volume.
-10. **Macro F1 Metric Priority**: Penalized models that collapse on rare or critical classes.
-11. **Human Validation of LLM Judge**: Conducted human correlation study on 60 samples to establish statistical validity of the automated judge.
-12. **Deterministic Response Generation**: Used precedent-grounded templating with LLM synthesis to guarantee zero API quota failures during 15-minute reproduction runs.
-13. **200 Curated Golden Examples**: Balanced statistical power ($\pm 5.5\%$ margin of error) with meticulous manual quality control.
-14. **Dark Editorial Web UI**: Built a clean Linear/Vercel-inspired dashboard to visually inspect every stage of the pipeline.
-15. **Alternating Preset Suite**: Designed test presets that strictly alternate between `AUTO_HANDLE` and `ESCALATE` with live outcome badges.
+| # | Architecture Decision | Context & Trade-Off Rationale |
+|---|---|---|
+| **01** | **`@AmazonHelp` Selection** | High volume (81k pairs) and grounded logistics vs. airline weather volatility |
+| **02** | **Conversation-Level Splitting** | Strictly partitioned threads to eliminate test-to-train retrieval leakage |
+| **03** | **Custom Empirical Taxonomy** | Modeled real Twitter customer intents rather than forcing fintech Banking77 |
+| **04** | **Explicit `unknown_ambiguous` Class** | Created dedicated intent sink to prevent nearest-neighbor forced classification |
+| **05** | **Local FAISS-CPU Search** | In-memory index eliminating cloud API latency, rate limits, and credentials |
+| **06** | **8,000 Historical Precedents** | Subsampled for dense semantic coverage while keeping RAM under 300 MB |
+| **07** | **Decoupled Evaluation Gates** | Intent Confidence $
+eq$ Evidence $
+eq$ Risk to prevent high-confidence bypass |
+| **08** | **Deterministic Risk Policies** | Hardcoded interceptors for financial disputes and account takeovers |
+| **09** | **Prioritizing False Auto-Handle Rate** | Optimized for zero unsafe automations rather than raw volume |
+| **10** | **Macro F1 Selection** | Unweighted mean penalizing models collapsing on rare/critical classes |
+| **11** | **Human Validation Study** | 60-sample human calibration ensuring LLM judge aligns with human standards |
+| **12** | **Deterministic Template Synthesis** | Eliminates external LLM API rate limits during local reproduction runs |
+| **13** | **200 Curated Golden Examples** | Achieves statistical power ($\pm 5.5\%$ error margin) with verified labels |
+| **14** | **Dark Editorial Web Interface** | Single-page audit console exposing all intermediate signals |
+| **15** | **Alternating Preset Suite** | Test presets alternating between `AUTO_HANDLE` and `ESCALATE` |
 
 ---
 
 ## 11. One-Week Roadmap
 
-If granted one more week of engineering time:
-1. **Multi-Label Intent Architecture**: Deploy multi-head binary classification to capture secondary billing or account security complaints in compound tweets.
-2. **Temporal Precedent Weighting**: Apply exponential time-decay weighting to FAISS retrieval to prioritize newer policy precedents over older ones.
-3. **Cross-Encoder Reranker**: Integrate a lightweight `ms-marco-MiniLM-L-6-v2` cross-encoder to re-rank top-15 FAISS candidates for granular intent alignment.
-4. **Scale Golden Set to 500 Examples**: Use active uncertainty sampling to identify queries with borderline confidence.
-5. **Cross-Brand Portability Benchmark**: Test transferability on `@AppleSupport` and `@Uber_Support` to validate domain portability.
+1. **Multi-Label Intent Architecture:** Implement a multi-head binary classifier to detect secondary billing or security complaints in compound tweets.
+2. **Temporal Precedent Weighting:** Apply exponential time-decay weighting to FAISS retrieval to prioritize newer policy precedents over older ones.
+3. **Hybrid Retrieval + Cross-Encoder Reranking:** Add a lightweight `ms-marco-MiniLM-L-6-v2` cross-encoder to re-rank top-15 FAISS candidates for granular alignment.
+4. **Expand Golden Set to 500 Cases:** Use active uncertainty sampling to hand-label cases where model confidence is borderline.
+5. **Cross-Brand Portability Benchmark:** Evaluate zero-shot transferability on `@AppleSupport` and `@Uber_Support` conversation splits.
 
 ---
 
 ## 12. Product Interface & Walkthrough
 
-The web interface is a single-page dark editorial dashboard accessible at **`http://localhost:8000`**:
+The web interface exposes the support pipeline as an auditable workflow rather than an opaque chatbot.
 
-### Tab 1: Triage Console
-- **Interactive Input**: Textarea for testing custom tweets or selecting from real-world presets.
-- **Alternating Test Presets**:
-  1. 🚚 Delivery Delay (`Auto`)
-  2. 🛡️ Hacked Account (`Escalate`)
-  3. 🔄 Return & Refund (`Auto`)
-  4. 💳 Double Charge (`Escalate`)
-  5. ❌ Cancel Order (`Auto`)
-  6. ❓ Ambiguous (`Escalate`)
-- **Linear Workflow Stepper**: Displays progress through Message ➔ Intent ➔ Evidence ➔ Sufficiency ➔ Risk ➔ Action.
-- **Decision Engine Output**: Displays decision badge (`AUTO_HANDLE` vs. `ESCALATE`), inference latency, stated reason code, and drafted grounded response.
-- **3 Independent Gate Cards**: Real-time display of Intent Confidence, Top-5 Consensus, and Policy Assessment.
+### Triage Console
+![Triage Console](docs/screenshots/triage-console.png)
+*Interactive query testing console with real-world presets, 6-stage linear pipeline stepper, 3 independent gate metrics, and structured decision engine output.*
 
-### Tab 2: Failure Post-Mortem
-- Interactive case studies of the top 5 production failures with raw tweets, failure classifications, root-cause hypotheses, and architectural remediation plans.
+### Benchmark & Proof
+![Benchmark & Proof](docs/screenshots/benchmark-proof.png)
+*Quantitative evaluation scorecard displaying headline safety, retrieval, intent, and human-validation metrics.*
 
-### Tab 3: Decision Log
-- 15 Architecture Decision Records formatted in clean Linear/Vercel style with expandable rationale and trade-off details.
+### Failure Post-Mortem
+![Failure Post-Mortem](docs/screenshots/failure-postmortem.png)
+*Detailed case studies of top production failure modes with root-cause hypotheses and architectural fixes.*
 
-### Tab 4: Benchmark & Proof
-- Quantitative scorecard showing headline metrics, comparison against Baseline 1 and Baseline 2, retrieval Recall@k curves, and LLM-as-judge correlation data.
+### Decision Log
+![Decision Log](docs/screenshots/decision-log.png)
+*Linear/Vercel-inspired Architecture Decision Records documenting 15 non-obvious engineering decisions and trade-offs.*
 
 ---
 
 ## 13. Technology Stack & Repository Structure
 
 ### Technology Stack
-- **Language**: Python 3.10+
-- **Backend API**: FastAPI, Uvicorn, Pydantic v2
-- **Embeddings & NLP**: Hugging Face `sentence-transformers` (`all-MiniLM-L6-v2`), PyTorch
-- **Vector Search**: Facebook AI Research FAISS (CPU, `IndexFlatIP`)
-- **Baseline Models**: `scikit-learn` (TF-IDF Vectorizer + Logistic Regression)
-- **Frontend**: HTML5, Tailwind CSS (Dark Editorial theme), Lucide Icons
-- **Testing & Quality**: PyTest, `pytest-asyncio`
+
+| Layer | Technologies |
+|---|---|
+| **Core Runtime** | Python 3.10+ |
+| **API Framework** | FastAPI, Uvicorn, Pydantic v2 |
+| **Embeddings & NLP** | Hugging Face `sentence-transformers` (`all-MiniLM-L6-v2`), PyTorch |
+| **Vector Indexing** | Facebook AI Research FAISS (CPU, `IndexFlatIP`) |
+| **Baseline Models** | `scikit-learn` (TF-IDF Vectorizer + Logistic Regression) |
+| **Frontend UI** | HTML5, Tailwind CSS, Lucide Icons |
+| **Test Harness** | PyTest, `pytest-asyncio` |
 
 ### Repository Structure
 
@@ -364,12 +392,14 @@ hiver-ai-support-agent/
 │   ├── metrics.py            # Automated classification, retrieval & safety metrics
 │   ├── llm_judge.py          # 12-point reply quality rubric
 │   ├── human_validation.py   # Human vs Judge Spearman correlation & Cohen's Kappa
-│   └── run_evaluation.py     # 15-minute reproduction harness
+│   └── run_evaluation.py     # Unified reproduction harness
 ├── reports/
 │   ├── final_report.md       # Complete 6-page technical report
 │   ├── failure_analysis.md   # Detailed failure post-mortems
 │   ├── decision_log.md       # 15 Architecture Decision Records
 │   └── results.json          # Cached benchmark output metrics
+├── docs/
+│   └── screenshots/          # Interface walkthrough screenshots
 ├── frontend/
 │   └── index.html            # Dark Editorial Web Triage Console (Tailwind + Lucide)
 ├── scripts/
@@ -389,35 +419,47 @@ hiver-ai-support-agent/
 
 ## 14. Quick Start (< 15-Minute Reproduction)
 
-### 1. Clone & Setup
+Designed to reproduce headline results well within the assignment's 15-minute requirement.
+
+### Requirements
+- Python 3.10+
+- pip
+
+### 1. Clone
 ```bash
 git clone https://github.com/Vaishnavidasyam/hiver-ai-support-agent.git
 cd hiver-ai-support-agent
+```
 
-# Create virtual environment
+### 2. Create Virtual Environment
+```bash
+# Windows:
 python -m venv venv
-# Activate (Windows):
 venv\Scripts\activate
-# Activate (macOS/Linux):
-source venv/bin/activate
 
-# Install dependencies
+# macOS/Linux:
+python -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
+```bash
 pip install -r requirements.txt
 ```
 
-### 2. Run Automated Benchmark Harness (< 15 seconds)
+### 4. Run Automated Evaluation Harness
 ```bash
 python -m evaluation.run_evaluation
 ```
-Evaluates all 200 Golden Set cases against Baseline 1, Baseline 2, and the Proposed Agent, printing the complete scorecard and saving results to `reports/results.json`.
+*Evaluates Baseline 1, Baseline 2, and Proposed Agent across all 200 Golden Set cases, prints the comparative scorecard, and saves outputs to `reports/results.json`.*
 
-### 3. Run Automated Test Suite (10/10 tests pass)
+### 5. Run Automated Test Suite (10/10 Passed)
 ```bash
 pytest tests/
 ```
-Validates zero data leakage between test pool and retrieval index, and asserts end-to-end pipeline functionality.
+*Validates zero data leakage between test pool and retrieval index, and asserts pipeline functionality.*
 
-### 4. Launch Web Console
+### 6. Launch Web Console
 ```bash
 python -m scripts.run_agent
 ```
@@ -428,17 +470,22 @@ Open **[http://localhost:8000](http://localhost:8000)** in your browser.
 ## 15. Limitations, What We Chose Not to Build & Author
 
 ### Limitations
-1. **Single-Turn Scope**: The current pipeline focuses on triaging the initial customer tweet. Multi-turn thread state tracking is handled through conversation context arrays but is not fully stateful.
-2. **Single-Label Restriction**: Compound queries combining two distinct intents (e.g. tracking + billing) must currently select a primary intent.
-3. **Static Precedent Base**: The vector index is built on a verified historical slice; real-time streaming updates from live Twitter streams require external ETL scheduling.
+- **Single-Label Intent Model:** Compound queries containing two distinct problems must select a primary intent.
+- **Historical Policy Drift:** Precedents reflect historical policies; modern policy updates require manual index refresh.
+- **Bounded Historical Corpus:** Retrieval is bounded to 8,000 indexed `@AmazonHelp` interaction pairs.
+- **200-Example Golden Set:** Provides $\pm 5.5\%$ margin of error at 95% confidence; larger test sets would capture rarer edge cases.
+- **No Live External Account Systems:** Pipeline does not query live Amazon ERP or carrier tracking systems.
+- **Imperfect LLM Judge:** Automated judge correlates strongly with humans ($ho = 0.7632$) but is not a complete replacement for human review.
 
-### What We Deliberately Chose NOT to Build
-- **No Autonomous Financial Writes**: The agent does not execute balance refunds or store credit additions via billing APIs.
-- **No Fabricated Live Tracking**: If a courier tracking number lacks live GPS telemetry, the agent redirects the user to the official portal rather than hallucinating an arrival time.
-- **No Free-Form Hallucinated Generation**: Responses are tightly grounded in retrieved brand precedents to preserve customer trust.
+### What We Chose Not to Build
+- **No Twitter/X API Bot:** Built as an auditable pipeline, not an active Twitter bot.
+- **No Autonomous Financial Writes:** The agent drafts refund guidance; it does not execute refund transactions via payment APIs.
+- **No Live Account Modifications:** Does not execute password resets or email changes.
+- **No Autonomous Financial/Security Resolution:** Strict policy forces human escalation on billing disputes and account takeovers.
+- **No Full Ticketing Platform:** Focuses on the core triage and grounding intelligence rather than replicating a full CRM ticketing suite.
+- **Not a Production-Ready Deployment:** Demonstrates safety gating and evaluation; requires enterprise integration before live customer routing.
 
-### 👤 Author
-- **Candidate**: Vaishnavi Dasyam
-- **GitHub**: [@Vaishnavidasyam](https://github.com/Vaishnavidasyam)
-- **Repository**: [https://github.com/Vaishnavidasyam/hiver-ai-support-agent](https://github.com/Vaishnavidasyam/hiver-ai-support-agent)
-- **Submission To**: `anurag@hiverhq.com`
+### Author
+- **Candidate:** Vaishnavi Dasyam
+- **GitHub:** [@Vaishnavidasyam](https://github.com/Vaishnavidasyam)
+- **Repository:** [https://github.com/Vaishnavidasyam/hiver-ai-support-agent](https://github.com/Vaishnavidasyam/hiver-ai-support-agent)
