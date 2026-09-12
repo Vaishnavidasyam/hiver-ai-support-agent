@@ -14,39 +14,6 @@ An evidence-grounded customer-support agent that understands customer intent, re
 
 ---
 
-### At a glance
-
-| Metric / Dimension | Value |
-|---|---|
-| **Target Brand** | `@AmazonHelp` (E-Commerce & Retail Logistics) |
-| **Support Intents** | 10 Derived Classes (including explicit `unknown_ambiguous`) |
-| **Golden Set** | 200 Hand-Labelled Cases (0% Test/Index Leakage) |
-| **Historical Precedents** | 8,000 Index Cases (`all-MiniLM-L6-v2` dense vectors) |
-| **Retrieval Engine** | FAISS CPU (`IndexFlatIP` Cosine Similarity) |
-| **Safety Interceptors** | Hardcoded policies for Account Security and Payment Disputes |
-| **Evaluation Framework** | Classification (Macro F1) + Retrieval (Recall@k, MRR) + Reply (12-pt Rubric) + Safety (FAHR) |
-
----
-
-## Table of Contents
-1. [Project Overview](#1-project-overview)
-2. [Problem & Objective](#2-problem--objective)
-3. [Solution / How It Works](#3-solution--how-it-works)
-4. [Target Brand & Intent Taxonomy](#4-target-brand--intent-taxonomy)
-5. [Safety Architecture](#5-safety-architecture)
-6. [System Architecture](#6-system-architecture)
-7. [Evaluation Methodology](#7-evaluation-methodology)
-8. [Headline Results](#8-headline-results)
-9. [Failure Analysis & Post-Mortem](#9-failure-analysis--post-mortem)
-10. [Engineering Decision Log](#10-engineering-decision-log)
-11. [One-Week Roadmap](#11-one-week-roadmap)
-12. [Product Interface & Walkthrough](#12-product-interface--walkthrough)
-13. [Technology Stack & Repository Structure](#13-technology-stack--repository-structure)
-14. [Quick Start (< 15-Minute Reproduction)](#14-quick-start--15-minute-reproduction)
-15. [Limitations, What We Chose Not to Build & Author](#15-limitations-what-we-chose-not-to-build--author)
-
----
-
 ## 1. Project Overview
 
 Production customer-support automation cannot afford black-box generative behavior. When customer inquiries involve financial transactions, lost shipments, or account compromises, generating an ungrounded or incorrect reply damages user trust and incurs significant operational cost.
@@ -120,12 +87,12 @@ graph TD
 | `refund_return_status` | Return labels, refund processing timelines, drop-off rules | Conditional Auto | Direct to Online Returns Center for label generation |
 | `damaged_defective_wrong_item` | Broken items, incorrect product received | Conditional Auto | Advise replacement/return workflow via order details |
 | `cancellation_modification` | Cancelling orders prior to dispatch, address changes | Conditional Auto | Direct to order management before dispatch lock |
-| `payment_billing_issue` | Double charges, failed deductions, gift card balances | **Hard Escalate** | Financial dispute: route immediately to human billing |
-| `account_security_login` | Hacked accounts, password resets, unauthorized access | **Hard Escalate** | Security incident: route immediately to account recovery |
+| `payment_billing_issue` | Double charges, failed deductions, gift card balances | Hard Escalate | Financial dispute: route immediately to human billing |
+| `account_security_login` | Hacked accounts, password resets, unauthorized access | Hard Escalate| Security incident: route immediately to account recovery |
 | `prime_membership_benefits` | Prime billing, delivery benefit eligibility | Conditional Auto | Direct to Prime account settings portal |
 | `product_stock_inquiry` | Restock timelines, seller availability | Conditional Auto | Direct to product detail page updates |
 | `feedback_complaint` | Delivery driver conduct, packaging feedback | Conditional Auto | Acknowledge feedback and route to logistics team |
-| `unknown_ambiguous` | Terse, unparseable, or low-confidence queries | **Auto Escalate** | Ambiguous query: request clarification before acting |
+| `unknown_ambiguous` | Terse, unparseable, or low-confidence queries | Auto Escalate | Ambiguous query: request clarification before acting |
 
 > **Why `unknown_ambiguous` matters:** An explicit ambiguous category prevents the classifier from forcing high-confidence predictions on incomplete or fragmented inputs.
 
@@ -234,7 +201,8 @@ The LLM judge was calibrated against **60 blind human annotations** ([`evaluatio
 - **Escalation Safety Recall:** **96.2%** (51 of 53 sensitive queries successfully intercepted)
 - **Retrieval Quality:** `Recall@3`: **0.6250** \| `Recall@5`: **0.6950** \| `Recall@10`: **0.6950** \| `MRR`: **0.5443**
 - **Human vs. Judge Validation (60 Samples):**
-  - Spearman Rank Correlation: $\mathbf{ho = 0.7632}$ ($p = 1.84 	imes 10^{-12}$)
+  - Spearman Rank Correlation: $\mathbf{
+ho = 0.7632}$ ($p = 1.84 	imes 10^{-12}$)
   - Weighted Cohen's Kappa: $\mathbf{\kappa = 0.6575}$
   - Close Agreement Rate ($\pm 1$ point): **81.7%**
 - **Inference Latency:** **18.4 ms** (average local CPU pipeline latency excluding network transmission)
@@ -320,17 +288,9 @@ eq$ Risk to prevent high-confidence bypass |
 
 ---
 
-## 11. One-Week Roadmap
-
-1. **Multi-Label Intent Architecture:** Implement a multi-head binary classifier to detect secondary billing or security complaints in compound tweets.
-2. **Temporal Precedent Weighting:** Apply exponential time-decay weighting to FAISS retrieval to prioritize newer policy precedents over older ones.
-3. **Hybrid Retrieval + Cross-Encoder Reranking:** Add a lightweight `ms-marco-MiniLM-L-6-v2` cross-encoder to re-rank top-15 FAISS candidates for granular alignment.
-4. **Expand Golden Set to 500 Cases:** Use active uncertainty sampling to hand-label cases where model confidence is borderline.
-5. **Cross-Brand Portability Benchmark:** Evaluate zero-shot transferability on `@AppleSupport` and `@Uber_Support` conversation splits.
-
 ---
 
-## 12. Product Interface & Walkthrough
+## 11. Product Interface & Walkthrough
 
 The web interface exposes the support pipeline as an auditable workflow rather than an opaque chatbot.
 
@@ -352,7 +312,7 @@ The web interface exposes the support pipeline as an auditable workflow rather t
 
 ---
 
-## 13. Technology Stack & Repository Structure
+## 12. Technology Stack & Repository Structure
 
 ### Technology Stack
 
@@ -417,7 +377,7 @@ hiver-ai-support-agent/
 
 ---
 
-## 14. Quick Start (< 15-Minute Reproduction)
+## 13. Quick Start (< 15-Minute Reproduction)
 
 Designed to reproduce headline results well within the assignment's 15-minute requirement.
 
@@ -467,7 +427,7 @@ Open **[http://localhost:8000](http://localhost:8000)** in your browser.
 
 ---
 
-## 15. Limitations, What We Chose Not to Build & Author
+## 14. Limitations
 
 ### Limitations
 - **Single-Label Intent Model:** Compound queries containing two distinct problems must select a primary intent.
@@ -475,16 +435,9 @@ Open **[http://localhost:8000](http://localhost:8000)** in your browser.
 - **Bounded Historical Corpus:** Retrieval is bounded to 8,000 indexed `@AmazonHelp` interaction pairs.
 - **200-Example Golden Set:** Provides $\pm 5.5\%$ margin of error at 95% confidence; larger test sets would capture rarer edge cases.
 - **No Live External Account Systems:** Pipeline does not query live Amazon ERP or carrier tracking systems.
-- **Imperfect LLM Judge:** Automated judge correlates strongly with humans ($ho = 0.7632$) but is not a complete replacement for human review.
-
-### What We Chose Not to Build
-- **No Twitter/X API Bot:** Built as an auditable pipeline, not an active Twitter bot.
-- **No Autonomous Financial Writes:** The agent drafts refund guidance; it does not execute refund transactions via payment APIs.
-- **No Live Account Modifications:** Does not execute password resets or email changes.
-- **No Autonomous Financial/Security Resolution:** Strict policy forces human escalation on billing disputes and account takeovers.
-- **No Full Ticketing Platform:** Focuses on the core triage and grounding intelligence rather than replicating a full CRM ticketing suite.
-- **Not a Production-Ready Deployment:** Demonstrates safety gating and evaluation; requires enterprise integration before live customer routing.
-
+- **Imperfect LLM Judge:** Automated judge correlates strongly with humans ($
+ho = 0.7632$) but is not a complete replacement for human review.
+ 
 ### Author
 - **Candidate:** Vaishnavi Dasyam
 - **GitHub:** [@Vaishnavidasyam](https://github.com/Vaishnavidasyam)
