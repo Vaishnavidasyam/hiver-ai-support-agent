@@ -274,19 +274,15 @@ Five representative failure modes were observed during benchmark evaluation ([`r
 | **04** | **Explicit `unknown_ambiguous` Class** | Created dedicated intent sink to prevent nearest-neighbor forced classification |
 | **05** | **Local FAISS-CPU Search** | In-memory index eliminating cloud API latency, rate limits, and credentials |
 | **06** | **8,000 Historical Precedents** | Subsampled for dense semantic coverage while keeping RAM under 300 MB |
-| **07** | **Decoupled Evaluation Gates** | Intent Confidence $
-eq$ Evidence $
-eq$ Risk to prevent high-confidence bypass |
+| **07** | **Decoupled Evaluation Gates** | Intent Confidence ≠ Evidence ≠ Risk to prevent high-confidence bypass |
 | **08** | **Deterministic Risk Policies** | Hardcoded interceptors for financial disputes and account takeovers |
 | **09** | **Prioritizing False Auto-Handle Rate** | Optimized for zero unsafe automations rather than raw volume |
 | **10** | **Macro F1 Selection** | Unweighted mean penalizing models collapsing on rare/critical classes |
 | **11** | **Human Validation Study** | 60-sample human calibration ensuring LLM judge aligns with human standards |
 | **12** | **Deterministic Template Synthesis** | Eliminates external LLM API rate limits during local reproduction runs |
-| **13** | **200 Curated Golden Examples** | Achieves statistical power ($\pm 5.5\%$ error margin) with verified labels |
+| **13** | **200 Curated Golden Examples** | Achieves statistical power (±5.5% error margin) with verified labels |
 | **14** | **Dark Editorial Web Interface** | Single-page audit console exposing all intermediate signals |
 | **15** | **Alternating Preset Suite** | Test presets alternating between `AUTO_HANDLE` and `ESCALATE` |
-
----
 
 ---
 
