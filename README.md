@@ -285,39 +285,28 @@ Five representative failure modes were observed during benchmark evaluation ([`r
 
 ---
 
-## 11. One-Week Roadmap
+ 
 
-1. **Multi-Label Intent Architecture:** Implement a multi-head binary classifier to detect secondary billing or security complaints in compound tweets.
-2. **Temporal Precedent Weighting:** Apply exponential time-decay weighting to FAISS retrieval to prioritize newer policy precedents over older ones.
-3. **Hybrid Retrieval + Cross-Encoder Reranking:** Add a lightweight `ms-marco-MiniLM-L-6-v2` cross-encoder to re-rank top-15 FAISS candidates for granular alignment.
-4. **Expand Golden Set to 500 Cases:** Use active uncertainty sampling to hand-label cases where model confidence is borderline.
-5. **Cross-Brand Portability Benchmark:** Evaluate zero-shot transferability on `@AppleSupport` and `@Uber_Support` conversation splits.
-
----
-
-## 12. Product Interface & Walkthrough
+## 11. Product Interface & Walkthrough
 
 The web interface exposes the support pipeline as an auditable workflow rather than an opaque chatbot.
 
 ### Triage Console
 ![Triage Console](docs/screenshots/triage-console.png)
-*Interactive query testing console showing @AmazonHelp brand lockup, 6 alternating presets, 3 independent gate metrics, and structured decision engine output.*
-
 ![Historical Precedents](docs/screenshots/triage-console-evidence.png)
+*Interactive query testing console showing @AmazonHelp brand lockup, 6 alternating presets, 3 independent gate metrics, and structured decision engine output.*
 *Grounded resolution evidence viewer displaying top-5 historical precedents retrieved via FAISS vector search with cosine similarity.*
 
 ### Benchmark & Proof
 ![Benchmark & Proof](docs/screenshots/benchmark-proof.png)
-*Quantitative evaluation scorecard displaying 4 key state metrics (Safety, Retrieval, Intent, Validation) and comparison against Baseline 1 and Baseline 2.*
-
 ![Benchmark Details](docs/screenshots/benchmark-proof-details.png)
+*Quantitative evaluation scorecard displaying 4 key state metrics (Safety, Retrieval, Intent, Validation) and comparison against Baseline 1 and Baseline 2.*
 *Research insight analysis explaining headline trade-offs, 12-point LLM-as-judge rubric, and 60-sample human calibration agreement.*
 
 ### Failure Post-Mortem
 ![Failure Post-Mortem](docs/screenshots/failure-postmortem.png)
-*Incident root-cause analysis showing boundary failures across multi-intent queries, promotional hashtags, and policy edge cases.*
-
 ![Failure Post-Mortem Cases](docs/screenshots/failure-postmortem-cases.png)
+*Incident root-cause analysis showing boundary failures across multi-intent queries, promotional hashtags, and policy edge cases.*
 *Detailed post-mortem breakdown covering cross-domain intents, terse financial fallbacks, and historical policy drift.*
 
 ### Decision Log
@@ -326,7 +315,7 @@ The web interface exposes the support pipeline as an auditable workflow rather t
 
 ---
 
-## 13. Technology Stack & Repository Structure
+## 12. Technology Stack & Repository Structure
 
 ### Technology Stack
 
@@ -391,7 +380,7 @@ hiver-ai-support-agent/
 
 ---
 
-## 14. Quick Start (< 15-Minute Reproduction)
+## 13. Quick Start 
 
 Designed to reproduce headline results well within the assignment's 15-minute requirement.
 
@@ -441,7 +430,7 @@ Open **[http://localhost:8000](http://localhost:8000)** in your browser.
 
 ---
 
-## 15. Limitations, What We Chose Not to Build & Author
+## 14. Limitations 
 
 ### Limitations
 - **Single-Label Intent Model:** Compound queries containing two distinct problems must select a primary intent.
@@ -451,14 +440,7 @@ Open **[http://localhost:8000](http://localhost:8000)** in your browser.
 - **No Live External Account Systems:** Pipeline does not query live Amazon ERP or carrier tracking systems.
 - **Imperfect LLM Judge:** Automated judge correlates strongly with humans (ρ = 0.7632) but is not a complete replacement for human review.
 
-### What We Chose Not to Build
-- **No Twitter/X API Bot:** Built as an auditable pipeline, not an active Twitter bot.
-- **No Autonomous Financial Writes:** The agent drafts refund guidance; it does not execute refund transactions via payment APIs.
-- **No Live Account Modifications:** Does not execute password resets or email changes.
-- **No Autonomous Financial/Security Resolution:** Strict policy forces human escalation on billing disputes and account takeovers.
-- **No Full Ticketing Platform:** Focuses on the core triage and grounding intelligence rather than replicating a full CRM ticketing suite.
-- **Not a Production-Ready Deployment:** Demonstrates safety gating and evaluation; requires enterprise integration before live customer routing.
-
+ 
 ### Author
 - **Candidate:** Vaishnavi Dasyam
 - **GitHub:** [@Vaishnavidasyam](https://github.com/Vaishnavidasyam)
