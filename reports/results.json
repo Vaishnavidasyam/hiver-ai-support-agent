@@ -1,0 +1,214 @@
+{
+  "dataset": {
+    "brand": "AmazonHelp",
+    "golden_set_size": 200,
+    "distribution": {
+      "auto_handle_true": 147,
+      "escalate_true": 53
+    }
+  },
+  "baselines": {
+    "majority": {
+      "intent_macro_f1": 0.0261,
+      "intent_accuracy": 0.15,
+      "false_auto_handle_rate": 1.0,
+      "escalation_f1": 0.0,
+      "reply_score_12": 9.77,
+      "reply_score_pct": 81.4
+    },
+    "tfidf_logistic": {
+      "intent_macro_f1": 0.7813,
+      "intent_accuracy": 0.78,
+      "false_auto_handle_rate": 0.2264,
+      "escalation_f1": 0.6308,
+      "reply_score_12": 10.45,
+      "reply_score_pct": 87.1
+    }
+  },
+  "proposed_agent": {
+    "intent": {
+      "accuracy": 0.57,
+      "macro_f1": 0.5913,
+      "weighted_f1": 0.5893,
+      "macro_precision": 0.6368,
+      "macro_recall": 0.6037,
+      "per_class_f1": {
+        "delivery_delay_tracking": 0.2917,
+        "refund_return_status": 0.5862,
+        "damaged_defective_wrong_item": 0.5909,
+        "cancellation_modification": 0.7429,
+        "payment_billing_issue": 0.8649,
+        "account_security_login": 0.8889,
+        "prime_membership_benefits": 0.6061,
+        "product_stock_inquiry": 0.5,
+        "feedback_complaint": 0.5185,
+        "unknown_ambiguous": 0.3226
+      },
+      "confusion_matrix": [
+        [
+          7,
+          0,
+          0,
+          1,
+          0,
+          1,
+          4,
+          2,
+          2,
+          13
+        ],
+        [
+          2,
+          17,
+          4,
+          0,
+          0,
+          0,
+          1,
+          1,
+          3,
+          7
+        ],
+        [
+          0,
+          2,
+          13,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          8
+        ],
+        [
+          3,
+          3,
+          0,
+          13,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          1,
+          0,
+          16,
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          1,
+          0,
+          0,
+          16,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          10,
+          0,
+          0,
+          2
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          5,
+          1,
+          4
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          7,
+          2
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          0,
+          2,
+          10
+        ]
+      ],
+      "labels": [
+        "delivery_delay_tracking",
+        "refund_return_status",
+        "damaged_defective_wrong_item",
+        "cancellation_modification",
+        "payment_billing_issue",
+        "account_security_login",
+        "prime_membership_benefits",
+        "product_stock_inquiry",
+        "feedback_complaint",
+        "unknown_ambiguous"
+      ]
+    },
+    "retrieval": {
+      "recall_at_3": 0.625,
+      "recall_at_5": 0.695,
+      "recall_at_10": 0.695,
+      "mrr": 0.5443
+    },
+    "escalation": {
+      "escalation_precision": 0.4016,
+      "escalation_recall": 0.9623,
+      "escalation_f1": 0.5667,
+      "false_auto_handle_rate": 0.0377,
+      "automation_rate": 0.365,
+      "unsafe_auto_handled_count": 2,
+      "safe_auto_handled_count": 71,
+      "correct_escalated_count": 51,
+      "unnecessary_escalated_count": 76
+    },
+    "reply_quality": {
+      "average_score_12": 9.02,
+      "average_score_pct": 75.2,
+      "max_score": 12.0
+    },
+    "latency_ms": 38.07
+  },
+  "judge_validation": {
+    "spearman_correlation": 0.7632,
+    "spearman_p_value": 0.0,
+    "close_agreement_rate": 0.8167,
+    "exact_agreement_rate": 0.6833,
+    "weighted_cohens_kappa": 0.6575,
+    "sample_size": 60
+  }
+}

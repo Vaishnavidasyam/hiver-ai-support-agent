@@ -1,0 +1,3504 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hiver Support AI — Evidence-Grounded Agent for @AmazonHelp</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239BE83F'%3E%3Cpath d='M.045 18.02c.072-.116.187-.124.348-.022 3.636 2.11 7.594 3.166 11.87 3.166 2.852 0 5.668-.533 8.447-1.595l.315-.14c.138-.06.234-.1.293-.13.226-.088.39-.046.525.13.12.174.09.336-.12.48-.256.19-.6.41-1.006.654-1.244.743-2.64 1.316-4.185 1.726a17.617 17.617 0 01-10.951-.577 17.88 17.88 0 01-5.43-3.35c-.1-.074-.151-.15-.151-.22 0-.047.021-.09.051-.13zm6.565-6.218c0-1.005.247-1.863.743-2.577.495-.71 1.17-1.25 2.04-1.615.796-.335 1.756-.575 2.912-.72.39-.046 1.033-.103 1.92-.174v-.37c0-.93-.105-1.558-.3-1.875-.302-.43-.78-.65-1.44-.65h-.182c-.48.046-.896.196-1.246.46-.35.27-.575.63-.675 1.096-.06.3-.206.465-.435.51l-2.52-.315c-.248-.06-.372-.18-.372-.39 0-.046.007-.09.022-.15.247-1.29.855-2.25 1.82-2.88.976-.616 2.1-.975 3.39-1.05h.54c1.65 0 2.957.434 3.888 1.29.135.15.27.3.405.48.12.165.224.314.283.45.075.134.15.33.195.57.06.254.105.42.135.51.03.104.062.3.076.615.01.313.02.493.02.553v5.28c0 .376.06.72.165 1.036.105.313.21.54.315.674l.51.674c.09.136.136.256.136.36 0 .12-.06.226-.18.314-1.2 1.05-1.86 1.62-1.963 1.71-.165.135-.375.15-.63.045a6.062 6.062 0 01-.526-.496l-.31-.347a9.391 9.391 0 01-.317-.42l-.3-.435c-.81.886-1.603 1.44-2.4 1.665-.494.15-1.093.227-1.83.227-1.11 0-2.04-.343-2.76-1.034-.72-.69-1.08-1.665-1.08-2.94l-.05-.076zm3.753-.438c0 .566.14 1.02.425 1.364.285.34.675.512 1.155.512.045 0 .106-.007.195-.02.09-.016.134-.023.166-.023.614-.16 1.08-.553 1.424-1.178.165-.28.285-.58.36-.91.09-.32.12-.59.135-.8.015-.195.015-.54.015-1.005v-.54c-.84 0-1.484.06-1.92.18-1.275.36-1.92 1.17-1.92 2.43l-.035-.02zm9.162 7.027c.03-.06.075-.11.132-.17.362-.243.714-.41 1.05-.5a8.094 8.094 0 011.612-.24c.14-.012.28 0 .41.03.65.06 1.05.168 1.172.33.063.09.099.228.099.39v.15c0 .51-.149 1.11-.424 1.8-.278.69-.664 1.248-1.156 1.68-.073.06-.14.09-.197.09-.03 0-.06 0-.09-.012-.09-.044-.107-.12-.064-.24.54-1.26.806-2.143.806-2.64 0-.15-.03-.27-.087-.344-.145-.166-.55-.257-1.224-.257-.243 0-.533.016-.87.046-.363.045-.7.09-1 .135-.09 0-.148-.014-.18-.044-.03-.03-.036-.047-.02-.077 0-.017.006-.03.02-.063v-.06z'/%3E%3C/svg%3E"
+    />
+    <script>
+      // Suppress Tailwind Play CDN warning in developer console
+      const _origWarn = console.warn;
+      console.warn = function (...args) {
+        if (
+          args[0] &&
+          typeof args[0] === "string" &&
+          args[0].includes("cdn.tailwindcss.com")
+        )
+          return;
+        _origWarn.apply(console, args);
+      };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: [
+                "Inter",
+                "-apple-system",
+                "BlinkMacSystemFont",
+                "sans-serif",
+              ],
+              mono: ["JetBrains Mono", "ui-monospace", "monospace"],
+            },
+            colors: {
+              dark: {
+                bg: "#070807",
+                surface: "#101510",
+                secondary: "#0B0E0B",
+                elevated: "#151C15",
+                border: "rgba(255, 255, 255, 0.07)",
+                borderHover: "rgba(255, 255, 255, 0.12)",
+              },
+              accent: {
+                lime: "#9BE83F",
+                light: "#C0F878",
+                glow: "rgba(155, 232, 63, 0.12)",
+              },
+              brand: {
+                light: "#F5F7F3",
+                secondary: "#A7AEA6",
+                muted: "#727A72",
+              },
+              status: {
+                warning: "#F2B84B",
+                error: "#FF6B61",
+                info: "#6CA8FF",
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        background-color: #070807;
+        color: #f5f7f3;
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #0b0e0b;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.12);
+        border-radius: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      .subtle-grid {
+        background-size: 32px 32px;
+        background-image:
+          linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.015) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.015) 1px,
+            transparent 1px
+          );
+      }
+      .preset-btn.active {
+        background-color: rgba(155, 232, 63, 0.08);
+        border-color: rgba(155, 232, 63, 0.4);
+        color: #f5f7f3;
+      }
+    </style>
+  </head>
+  <body
+    class="min-h-screen custom-scrollbar selection:bg-accent-lime selection:text-black subtle-grid"
+  >
+    <!-- Primary Header Navigation (Sticky, 64px, Subtle Backdrop Blur) -->
+    <header
+      class="sticky top-0 z-50 border-b border-dark-border bg-dark-bg/90 backdrop-blur-md"
+    >
+      <div
+        class="max-w-[1360px] mx-auto px-6 h-16 flex items-center justify-between"
+      >
+        <!-- Brand Lockup -->
+        <div class="flex items-center space-x-3">
+          <div
+            class="w-7 h-7 rounded-lg bg-accent-lime text-black flex items-center justify-center shadow-[0_0_12px_rgba(155,232,63,0.3)] transition-transform hover:scale-105"
+            title="@AmazonHelp Support AI"
+          >
+            <svg
+              class="w-4 h-4 fill-black"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-label="Amazon"
+            >
+              <path
+                d="M.045 18.02c.072-.116.187-.124.348-.022 3.636 2.11 7.594 3.166 11.87 3.166 2.852 0 5.668-.533 8.447-1.595l.315-.14c.138-.06.234-.1.293-.13.226-.088.39-.046.525.13.12.174.09.336-.12.48-.256.19-.6.41-1.006.654-1.244.743-2.64 1.316-4.185 1.726a17.617 17.617 0 01-10.951-.577 17.88 17.88 0 01-5.43-3.35c-.1-.074-.151-.15-.151-.22 0-.047.021-.09.051-.13zm6.565-6.218c0-1.005.247-1.863.743-2.577.495-.71 1.17-1.25 2.04-1.615.796-.335 1.756-.575 2.912-.72.39-.046 1.033-.103 1.92-.174v-.37c0-.93-.105-1.558-.3-1.875-.302-.43-.78-.65-1.44-.65h-.182c-.48.046-.896.196-1.246.46-.35.27-.575.63-.675 1.096-.06.3-.206.465-.435.51l-2.52-.315c-.248-.06-.372-.18-.372-.39 0-.046.007-.09.022-.15.247-1.29.855-2.25 1.82-2.88.976-.616 2.1-.975 3.39-1.05h.54c1.65 0 2.957.434 3.888 1.29.135.15.27.3.405.48.12.165.224.314.283.45.075.134.15.33.195.57.06.254.105.42.135.51.03.104.062.3.076.615.01.313.02.493.02.553v5.28c0 .376.06.72.165 1.036.105.313.21.54.315.674l.51.674c.09.136.136.256.136.36 0 .12-.06.226-.18.314-1.2 1.05-1.86 1.62-1.963 1.71-.165.135-.375.15-.63.045a6.062 6.062 0 01-.526-.496l-.31-.347a9.391 9.391 0 01-.317-.42l-.3-.435c-.81.886-1.603 1.44-2.4 1.665-.494.15-1.093.227-1.83.227-1.11 0-2.04-.343-2.76-1.034-.72-.69-1.08-1.665-1.08-2.94l-.05-.076zm3.753-.438c0 .566.14 1.02.425 1.364.285.34.675.512 1.155.512.045 0 .106-.007.195-.02.09-.016.134-.023.166-.023.614-.16 1.08-.553 1.424-1.178.165-.28.285-.58.36-.91.09-.32.12-.59.135-.8.015-.195.015-.54.015-1.005v-.54c-.84 0-1.484.06-1.92.18-1.275.36-1.92 1.17-1.92 2.43l-.035-.02zm9.162 7.027c.03-.06.075-.11.132-.17.362-.243.714-.41 1.05-.5a8.094 8.094 0 011.612-.24c.14-.012.28 0 .41.03.65.06 1.05.168 1.172.33.063.09.099.228.099.39v.15c0 .51-.149 1.11-.424 1.8-.278.69-.664 1.248-1.156 1.68-.073.06-.14.09-.197.09-.03 0-.06 0-.09-.012-.09-.044-.107-.12-.064-.24.54-1.26.806-2.143.806-2.64 0-.15-.03-.27-.087-.344-.145-.166-.55-.257-1.224-.257-.243 0-.533.016-.87.046-.363.045-.7.09-1 .135-.09 0-.148-.014-.18-.044-.03-.03-.036-.047-.02-.077 0-.017.006-.03.02-.063v-.06z"
+              />
+            </svg>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-semibold text-sm tracking-tight text-brand-light"
+              >Hiver Support AI</span
+            >
+            <span
+              class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border border-dark-border text-brand-secondary bg-dark-secondary text-[11px] font-mono"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-accent-lime"></span>
+              @AmazonHelp
+            </span>
+          </div>
+        </div>
+
+        <!-- Segmented Navigation Tabs -->
+        <nav
+          class="hidden md:flex items-center gap-1 text-xs font-medium text-brand-secondary bg-dark-secondary p-1 rounded-xl border border-dark-border"
+        >
+          <button
+            onclick="switchTab('triage')"
+            id="nav-triage"
+            class="nav-item px-3 py-1.5 rounded-lg text-accent-lime bg-dark-surface border border-accent-lime/20 transition-all font-medium"
+          >
+            Triage Console
+          </button>
+          <button
+            onclick="switchTab('failures')"
+            id="nav-failures"
+            class="nav-item px-3 py-1.5 rounded-lg hover:text-brand-light transition-all"
+          >
+            Failure Post-Mortem
+          </button>
+          <button
+            onclick="switchTab('decisions')"
+            id="nav-decisions"
+            class="nav-item px-3 py-1.5 rounded-lg hover:text-brand-light transition-all"
+          >
+            Decision Log (15)
+          </button>
+          <button
+            onclick="switchTab('evaluation')"
+            id="nav-evaluation"
+            class="nav-item px-3 py-1.5 rounded-lg hover:text-brand-light transition-all"
+          >
+            Benchmark & Proof
+          </button>
+        </nav>
+
+        <!-- System Status (Understated, No Fake Latency) -->
+        <div
+          class="flex items-center space-x-2 px-3 py-1 rounded-lg bg-dark-secondary border border-dark-border"
+        >
+          <span class="flex h-2 w-2 relative">
+            <span
+              class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-lime opacity-60"
+            ></span>
+            <span
+              class="relative inline-flex rounded-full h-2 w-2 bg-accent-lime"
+            ></span>
+          </span>
+          <span
+            class="text-[11px] font-mono font-medium text-brand-secondary uppercase tracking-wider"
+            >SYSTEM READY</span
+          >
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main
+      class="relative z-10 max-w-[1360px] mx-auto px-6 pt-7 pb-12 space-y-7"
+    >
+      <!-- ======================================================= -->
+      <!-- TAB 1: TRIAGE CONSOLE (42% / 58% SPLIT, TOP-ALIGNED)   -->
+      <!-- ======================================================= -->
+      <section id="tab-triage" class="tab-content space-y-6">
+        <!-- Hero Section (Expanded Visual Hierarchy - Triage Console Specific) -->
+        <div class="text-center max-w-4xl mx-auto space-y-4 pt-2 pb-1">
+          <div
+            class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-dark-border bg-dark-surface text-xs font-mono text-accent-lime shadow-sm"
+          >
+            <span
+              class="w-2 h-2 rounded-full bg-accent-lime animate-pulse"
+            ></span>
+            <span>EVIDENCE-GROUNDED CUSTOMER SUPPORT</span>
+            <span class="text-brand-muted">•</span>
+            <span>LEAKAGE-SAFE SPLIT</span>
+          </div>
+
+          <h1
+            class="text-4xl sm:text-5xl md:text-[54px] font-extrabold tracking-tight text-brand-light leading-[1.12]"
+          >
+            Support that <span class="text-accent-lime">thinks</span> before it
+            replies.
+          </h1>
+
+          <p
+            class="text-sm sm:text-base text-brand-secondary leading-relaxed max-w-2xl mx-auto font-normal"
+          >
+            Understands intent, retrieves relevant historical resolutions,
+            verifies evidence sufficiency, and decides whether to automate or
+            escalate—with an explicit reason.
+          </p>
+
+          <!-- Refined 3-Metric Horizontal Statistics Strip (Expanded) -->
+          <div class="pt-2">
+            <div
+              class="rounded-xl bg-dark-surface border border-dark-border max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-dark-border text-center sm:text-left p-1.5 shadow-md"
+            >
+              <div class="px-6 py-3.5">
+                <div
+                  class="text-2xl sm:text-3xl font-extrabold font-mono text-brand-light tracking-tight"
+                >
+                  8,000+
+                </div>
+                <div
+                  class="text-[11px] text-brand-muted uppercase font-mono tracking-wider mt-1"
+                >
+                  Historical Conversations
+                </div>
+              </div>
+              <div class="px-6 py-3.5">
+                <div
+                  class="text-2xl sm:text-3xl font-extrabold font-mono text-brand-light tracking-tight"
+                >
+                  10
+                </div>
+                <div
+                  class="text-[11px] text-brand-muted uppercase font-mono tracking-wider mt-1"
+                >
+                  Intent Classes
+                </div>
+              </div>
+              <div class="px-6 py-3.5">
+                <div
+                  class="text-2xl sm:text-3xl font-extrabold font-mono text-accent-lime tracking-tight"
+                >
+                  200
+                </div>
+                <div
+                  class="text-[11px] text-brand-muted uppercase font-mono tracking-wider mt-1"
+                >
+                  Golden Examples
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Linear Workflow Stepper: Visualizing the Agent Decision Pipeline -->
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <!-- LEFT COLUMN: Customer Input Panel (~42% Width: lg:col-span-5) -->
+          <div class="lg:col-span-5 space-y-4">
+            <div
+              class="bg-dark-surface border border-dark-border rounded-xl p-5 shadow-xl space-y-4"
+            >
+              <!-- Card Header -->
+              <div
+                class="flex items-center justify-between pb-3 border-b border-dark-border"
+              >
+                <div class="flex items-center gap-2">
+                  <i
+                    data-lucide="message-square"
+                    class="w-4 h-4 text-accent-lime"
+                  ></i>
+                  <h2
+                    class="text-xs font-semibold tracking-wider text-brand-light uppercase font-mono"
+                  >
+                    Incoming Customer Tweet
+                  </h2>
+                </div>
+                <span class="text-[11px] text-brand-muted font-mono"
+                  >Twitter / X Input</span
+                >
+              </div>
+
+              <!-- Text Input Area -->
+              <div>
+                <label for="query-input" class="sr-only"
+                  >Customer message</label
+                >
+                <textarea
+                  id="query-input"
+                  rows="3"
+                  class="w-full bg-dark-secondary border border-dark-border rounded-xl p-3.5 text-xs sm:text-sm text-brand-light placeholder:text-brand-muted focus:outline-none focus:border-accent-lime/60 transition-all resize-none leading-relaxed"
+                  placeholder="Enter customer message or tweet..."
+                >
+Where is my package? It was supposed to be delivered yesterday and tracking has stopped updating.</textarea
+                >
+              </div>
+
+              <!-- Test Presets (Lucide Icons, No Emojis, Compact Chips) -->
+              <div class="space-y-2">
+                <span
+                  class="text-[10px] text-brand-muted block font-mono uppercase tracking-wider"
+                  >Real-World Test Presets:</span
+                >
+                <div class="flex flex-wrap gap-1.5" id="presets-container">
+                  <!-- 1. Auto-Handle: Delivery Delay -->
+                  <button
+                    type="button"
+                    onclick="selectPreset(this, 'delivery')"
+                    class="preset-btn active px-2.5 py-1.5 rounded-lg border border-dark-border bg-dark-secondary text-xs text-brand-secondary hover:text-brand-light hover:border-dark-borderHover transition-all font-medium flex items-center gap-1.5"
+                  >
+                    <i
+                      data-lucide="truck"
+                      class="w-3.5 h-3.5 text-accent-lime"
+                    ></i>
+                    <span>Delivery Delay</span>
+                    <span
+                      class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-accent-lime/10 text-accent-lime border border-accent-lime/20"
+                      >Auto</span
+                    >
+                  </button>
+
+                  <!-- 2. Escalate: Hacked Account -->
+                  <button
+                    type="button"
+                    onclick="selectPreset(this, 'security')"
+                    class="preset-btn px-2.5 py-1.5 rounded-lg border border-dark-border bg-dark-secondary text-xs text-brand-secondary hover:text-brand-light hover:border-dark-borderHover transition-all font-medium flex items-center gap-1.5"
+                  >
+                    <i
+                      data-lucide="shield-alert"
+                      class="w-3.5 h-3.5 text-status-error"
+                    ></i>
+                    <span>Hacked Account</span>
+                    <span
+                      class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-status-error/10 text-status-error border border-status-error/20"
+                      >Escalate</span
+                    >
+                  </button>
+
+                  <!-- 3. Auto-Handle: Return & Refund -->
+                  <button
+                    type="button"
+                    onclick="selectPreset(this, 'return')"
+                    class="preset-btn px-2.5 py-1.5 rounded-lg border border-dark-border bg-dark-secondary text-xs text-brand-secondary hover:text-brand-light hover:border-dark-borderHover transition-all font-medium flex items-center gap-1.5"
+                  >
+                    <i
+                      data-lucide="rotate-ccw"
+                      class="w-3.5 h-3.5 text-accent-lime"
+                    ></i>
+                    <span>Return & Refund</span>
+                    <span
+                      class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-accent-lime/10 text-accent-lime border border-accent-lime/20"
+                      >Auto</span
+                    >
+                  </button>
+
+                  <!-- 4. Escalate: Double Charge -->
+                  <button
+                    type="button"
+                    onclick="selectPreset(this, 'billing')"
+                    class="preset-btn px-2.5 py-1.5 rounded-lg border border-dark-border bg-dark-secondary text-xs text-brand-secondary hover:text-brand-light hover:border-dark-borderHover transition-all font-medium flex items-center gap-1.5"
+                  >
+                    <i
+                      data-lucide="credit-card"
+                      class="w-3.5 h-3.5 text-status-warning"
+                    ></i>
+                    <span>Double Charge</span>
+                    <span
+                      class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-status-warning/10 text-status-warning border border-status-warning/20"
+                      >Escalate</span
+                    >
+                  </button>
+
+                  <!-- 5. Auto-Handle: Cancel Order -->
+                  <button
+                    type="button"
+                    onclick="selectPreset(this, 'cancel')"
+                    class="preset-btn px-2.5 py-1.5 rounded-lg border border-dark-border bg-dark-secondary text-xs text-brand-secondary hover:text-brand-light hover:border-dark-borderHover transition-all font-medium flex items-center gap-1.5"
+                  >
+                    <i
+                      data-lucide="x-circle"
+                      class="w-3.5 h-3.5 text-accent-lime"
+                    ></i>
+                    <span>Cancel Order</span>
+                    <span
+                      class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-accent-lime/10 text-accent-lime border border-accent-lime/20"
+                      >Auto</span
+                    >
+                  </button>
+
+                  <!-- 6. Escalate: Ambiguous -->
+                  <button
+                    type="button"
+                    onclick="selectPreset(this, 'ambiguous')"
+                    class="preset-btn px-2.5 py-1.5 rounded-lg border border-dark-border bg-dark-secondary text-xs text-brand-secondary hover:text-brand-light hover:border-dark-borderHover transition-all font-medium flex items-center gap-1.5"
+                  >
+                    <i
+                      data-lucide="help-circle"
+                      class="w-3.5 h-3.5 text-brand-muted"
+                    ></i>
+                    <span>Ambiguous</span>
+                    <span
+                      class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-brand-muted/10 text-brand-muted border border-brand-muted/20"
+                      >Escalate</span
+                    >
+                  </button>
+                </div>
+              </div>
+
+              <!-- Main CTA Process Button (50px height, subtle radius, sequential loading state) -->
+              <button
+                type="button"
+                onclick="runAnalysis()"
+                id="btn-analyze"
+                class="h-[48px] w-full rounded-xl bg-accent-lime hover:bg-accent-light text-black font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 shadow-[0_0_14px_rgba(155,232,63,0.22)] active:scale-[0.99]"
+              >
+                <i data-lucide="zap" class="w-4 h-4"></i>
+                <span>Process Through Pipeline →</span>
+              </button>
+
+              <!-- Compact Safety Architecture Callout (Integrated tightly into left panel) -->
+              <div class="pt-1">
+                <div
+                  class="p-3.5 rounded-xl bg-dark-secondary border border-dark-border text-xs space-y-2"
+                >
+                  <div
+                    class="flex items-center justify-between text-[11px] font-mono uppercase"
+                  >
+                    <span
+                      class="flex items-center gap-1.5 text-brand-light font-semibold"
+                    >
+                      <i
+                        data-lucide="shield-check"
+                        class="w-3.5 h-3.5 text-accent-lime"
+                      ></i>
+                      Safety Architecture
+                    </span>
+                    <span class="text-accent-lime text-[10px]"
+                      >Independent Gates</span
+                    >
+                  </div>
+                  <div
+                    class="py-1.5 px-2.5 rounded-lg bg-dark-surface border border-dark-border font-mono text-[10px] text-accent-lime flex items-center justify-between"
+                  >
+                    <span>Intent Confidence</span>
+                    <span class="text-brand-muted">≠</span>
+                    <span>Evidence Sufficiency</span>
+                    <span class="text-brand-muted">≠</span>
+                    <span>Escalation Decision</span>
+                  </div>
+                  <p class="text-[11px] text-brand-muted leading-relaxed">
+                    A high-confidence classification never bypasses evidence or
+                    risk checks.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN: AI Decision & Evidence Inspector (~58% Width: lg:col-span-7) -->
+          <div class="lg:col-span-7 space-y-4">
+            <!-- Decision Engine Card -->
+            <div
+              class="bg-dark-surface border border-dark-border rounded-xl p-5 shadow-xl space-y-4"
+            >
+              <!-- Decision Header: Decision Engine & Actual Inference Latency -->
+              <div
+                class="flex items-center justify-between pb-3 border-b border-dark-border"
+              >
+                <div>
+                  <span
+                    class="text-[10px] text-brand-muted font-mono uppercase tracking-wider block"
+                    >Decision Engine</span
+                  >
+                  <div class="flex items-center gap-2.5 mt-1">
+                    <span
+                      id="res-decision"
+                      class="text-2xl font-extrabold text-accent-lime tracking-tight font-mono"
+                      >AUTO_HANDLE</span
+                    >
+                    <span
+                      id="res-badge"
+                      class="px-2.5 py-0.5 rounded text-xs font-mono font-medium border border-accent-lime/30 bg-accent-lime/10 text-accent-lime"
+                    >
+                      Safe Automated Resolution
+                    </span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span
+                    class="text-[10px] text-brand-muted font-mono uppercase tracking-wider block"
+                    >Inference Latency</span
+                  >
+                  <span
+                    id="res-latency"
+                    class="text-sm font-mono font-semibold text-brand-light mt-1 block"
+                    >18.4 ms</span
+                  >
+                </div>
+              </div>
+
+              <!-- Reason Code & Explanation -->
+              <div
+                class="bg-dark-secondary border border-dark-border rounded-xl p-3 text-xs leading-relaxed"
+              >
+                <div class="flex items-center gap-1.5 font-mono mb-1">
+                  <span class="text-[10px] text-brand-muted uppercase"
+                    >Reason Code:</span
+                  >
+                  <span
+                    id="res-reason-code"
+                    class="text-accent-lime font-semibold"
+                    >STRONG_EVIDENCE</span
+                  >
+                </div>
+                <p id="res-reason-text" class="text-brand-secondary text-xs">
+                  High-confidence intent + consistent historical precedent
+                  support safe automation.
+                </p>
+              </div>
+
+              <!-- 3 Compact Diagnostic Metric Blocks (ONE HORIZONTAL ROW) -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <!-- Block 01: Intent Confidence -->
+                <div
+                  class="p-3 rounded-xl bg-dark-secondary border border-dark-border"
+                >
+                  <div
+                    class="flex items-center justify-between text-[10px] font-mono text-brand-muted uppercase"
+                  >
+                    <span>01 Intent Conf.</span>
+                    <span id="res-conf" class="text-accent-lime font-bold"
+                      >83%</span
+                    >
+                  </div>
+                  <div
+                    id="res-intent"
+                    class="text-xs font-mono font-semibold text-brand-light mt-1 truncate"
+                    title="delivery_delay_tracking"
+                  >
+                    delivery_delay_tracking
+                  </div>
+                  <div
+                    class="w-full bg-dark-surface rounded-full h-1 mt-2 overflow-hidden border border-dark-border"
+                  >
+                    <div
+                      id="res-conf-bar"
+                      class="bg-accent-lime h-full rounded-full transition-all duration-300"
+                      style="width: 83%"
+                    ></div>
+                  </div>
+                </div>
+
+                <!-- Block 02: Evidence Sufficiency -->
+                <div
+                  class="p-3 rounded-xl bg-dark-secondary border border-dark-border"
+                >
+                  <div
+                    class="flex items-center justify-between text-[10px] font-mono text-brand-muted uppercase"
+                  >
+                    <span>02 Evidence</span>
+                    <span class="text-[10px] text-brand-muted font-mono"
+                      >Consensus &ge;0.6</span
+                    >
+                  </div>
+                  <div
+                    id="res-evidence-suff"
+                    class="text-xs font-mono font-bold text-accent-lime mt-1 flex items-center gap-1"
+                  >
+                    <i
+                      data-lucide="check"
+                      class="w-3.5 h-3.5 text-accent-lime"
+                    ></i>
+                    <span>PASS · Similarity 0.80</span>
+                  </div>
+                  <div class="text-[10px] font-mono text-brand-muted mt-1.5">
+                    Supported by Precedents
+                  </div>
+                </div>
+
+                <!-- Block 03: Risk Assessment -->
+                <div
+                  class="p-3 rounded-xl bg-dark-secondary border border-dark-border"
+                >
+                  <div
+                    class="flex items-center justify-between text-[10px] font-mono text-brand-muted uppercase"
+                  >
+                    <span>03 Risk Assessment</span>
+                    <span class="text-[10px] text-brand-muted font-mono"
+                      >Policy</span
+                    >
+                  </div>
+                  <div
+                    id="res-risk"
+                    class="text-xs font-mono font-bold text-brand-light mt-1 truncate"
+                  >
+                    LOW (Logistics)
+                  </div>
+                  <div class="text-[10px] font-mono text-brand-muted mt-1.5">
+                    Non-financial / Safe
+                  </div>
+                </div>
+              </div>
+
+              <!-- Grounded Reply Draft (Sanitized, Artifact-Free, Evidence Grounded) -->
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <span
+                    class="text-[10px] text-brand-muted font-mono uppercase tracking-wider"
+                    >Grounded Reply Draft</span
+                  >
+                  <span
+                    id="grounding-badge"
+                    class="text-[11px] text-accent-lime flex items-center gap-1 font-mono"
+                  >
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                    <span>GROUNDING CHECK · PASS</span>
+                  </span>
+                </div>
+                <div
+                  id="res-reply"
+                  class="bg-dark-secondary border border-dark-border rounded-xl p-3.5 text-xs sm:text-sm text-brand-light leading-relaxed border-l-4 border-l-accent-lime"
+                >
+                  I'm sorry for the inconvenience! We'd like to take a closer
+                  look at this with you and go over available options; please
+                  reach out to us at your earliest convenience here:
+                  amazon.com/orders
+                </div>
+                <div
+                  class="flex items-center justify-between text-[10px] text-brand-muted font-mono pt-0.5"
+                >
+                  <span>Supported by 3 historical precedents</span>
+                  <span>No unsupported policy claims detected</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Historical Precedents (FAISS Evidence Inspector, Controlled Height, Clean Text) -->
+            <div
+              class="bg-dark-surface border border-dark-border rounded-xl p-5 shadow-xl space-y-3"
+            >
+              <div
+                class="flex items-center justify-between pb-2.5 border-b border-dark-border"
+              >
+                <div>
+                  <h3
+                    class="text-xs font-semibold text-brand-light uppercase font-mono flex items-center gap-2"
+                  >
+                    <i
+                      data-lucide="database"
+                      class="w-3.5 h-3.5 text-accent-lime"
+                    ></i>
+                    <span>Historical Precedents</span>
+                    <span class="text-[10px] text-brand-muted font-normal"
+                      >• FAISS Top-K Evidence</span
+                    >
+                  </h3>
+                </div>
+                <span
+                  id="evidence-count"
+                  class="text-[10px] font-mono px-2 py-0.5 rounded bg-dark-secondary border border-dark-border text-brand-secondary"
+                >
+                  5 Precedents
+                </span>
+              </div>
+
+              <div
+                id="precedents-container"
+                class="space-y-2.5 max-h-[290px] overflow-y-auto pr-1 custom-scrollbar"
+              >
+                <!-- Dynamically populated precedent cards with cleaned text -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- ======================================================= -->
+      <!-- TAB 2: FAILURE POST-MORTEM (INCIDENT ANALYSIS)          -->
+      <!-- ======================================================= -->
+      <section id="tab-failures" class="tab-content hidden space-y-7">
+        <!-- Section Header with Engineering Report Hierarchy -->
+        <div class="border-b border-dark-border pb-4 space-y-1.5">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-status-error"></span>
+            <span
+              class="text-[11px] font-mono uppercase tracking-widest text-brand-secondary"
+              >INCIDENT ROOT-CAUSE ANALYSIS</span
+            >
+          </div>
+          <h2
+            class="text-2xl sm:text-3xl font-extrabold text-brand-light tracking-tight"
+          >
+            Failure Post-Mortem
+          </h2>
+          <div class="text-xs sm:text-sm font-medium text-brand-light">
+            Top 5 Real-World Failure Modes
+            <span
+              class="text-brand-secondary font-normal block sm:inline sm:ml-1 mt-0.5 sm:mt-0"
+            >
+              — Honest engineering root-cause analysis of real edge cases and
+              boundary failures uncovered during Golden Set evaluation.
+            </span>
+          </div>
+        </div>
+
+        <!-- Failure Summary Strip (5 Documented Incidents by Severity) -->
+        <div
+          class="bg-dark-surface border border-dark-border rounded-xl p-3 sm:p-4 shadow-xl"
+        >
+          <div
+            class="flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs font-mono"
+          >
+            <div class="flex items-center gap-3 shrink-0">
+              <div class="flex items-baseline gap-1.5">
+                <span class="text-xl font-extrabold text-brand-light font-mono"
+                  >5</span
+                >
+                <span
+                  class="text-[10px] text-brand-muted uppercase tracking-wider"
+                  >Documented Incidents</span
+                >
+              </div>
+              <span class="text-dark-border hidden md:inline">|</span>
+              <span class="text-[11px] text-brand-secondary hidden sm:inline"
+                >Golden Set Boundary Cases</span
+              >
+            </div>
+
+            <!-- Quick Jump / Severity Legend Strip -->
+            <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <a
+                href="#fail-01"
+                class="px-2.5 py-1 rounded-lg border border-red-500/30 bg-red-500/10 text-status-error text-[10px] font-semibold hover:bg-red-500/20 transition-all flex items-center gap-1"
+              >
+                <span class="w-1.5 h-1.5 rounded-full bg-status-error"></span>
+                <span>01 CRITICAL</span>
+              </a>
+              <a
+                href="#fail-02"
+                class="px-2.5 py-1 rounded-lg border border-amber-500/30 bg-amber-500/10 text-status-warning text-[10px] font-semibold hover:bg-amber-500/20 transition-all flex items-center gap-1"
+              >
+                <span class="w-1.5 h-1.5 rounded-full bg-status-warning"></span>
+                <span>02 HIGH</span>
+              </a>
+              <a
+                href="#fail-03"
+                class="px-2.5 py-1 rounded-lg border border-blue-500/30 bg-blue-500/10 text-status-info text-[10px] font-semibold hover:bg-blue-500/20 transition-all flex items-center gap-1"
+              >
+                <span class="w-1.5 h-1.5 rounded-full bg-status-info"></span>
+                <span>03 MEDIUM</span>
+              </a>
+              <a
+                href="#fail-04"
+                class="px-2.5 py-1 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-accent-lime text-[10px] font-semibold hover:bg-emerald-500/20 transition-all flex items-center gap-1"
+              >
+                <span class="w-1.5 h-1.5 rounded-full bg-accent-lime"></span>
+                <span>04 SAFE FALLBACK</span>
+              </a>
+              <a
+                href="#fail-05"
+                class="px-2.5 py-1 rounded-lg border border-purple-500/30 bg-purple-500/10 text-purple-400 text-[10px] font-semibold hover:bg-purple-500/20 transition-all flex items-center gap-1"
+              >
+                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                <span>05 KNOWLEDGE DRIFT</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Incident Cards Grid (2-Column Desktop, 1-Column Mobile) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
+          <!-- FAIL 01: Multi-Intent Overload (CRITICAL / FINANCIAL SAFETY) -->
+          <article
+            id="fail-01"
+            class="bg-dark-surface border border-dark-border rounded-xl p-5 sm:p-6 shadow-xl space-y-4 hover:border-red-500/40 transition-all duration-200 flex flex-col justify-between"
+          >
+            <div class="space-y-4">
+              <!-- Incident Header -->
+              <div
+                class="flex items-center justify-between pb-3 border-b border-dark-border"
+              >
+                <div class="flex items-center gap-2">
+                  <span class="font-mono font-bold text-xs text-brand-light"
+                    >FAIL 01</span
+                  >
+                  <span class="text-brand-muted">•</span>
+                  <span
+                    class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-red-500/10 border border-red-500/30 text-status-error text-[10px] font-bold tracking-wider uppercase font-mono"
+                  >
+                    <span
+                      class="w-1.5 h-1.5 rounded-full bg-status-error"
+                    ></span>
+                    CRITICAL
+                  </span>
+                </div>
+                <span class="text-xs font-mono text-brand-secondary font-medium"
+                  >Multi-Intent Overload</span
+                >
+              </div>
+
+              <!-- Customer Query (Evidence Inset) -->
+              <div class="space-y-1.5">
+                <span
+                  class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block"
+                  >CUSTOMER QUERY</span
+                >
+                <div
+                  class="bg-dark-secondary border border-dark-border rounded-lg p-3.5 text-xs text-brand-light italic leading-relaxed"
+                >
+                  "Your Amazon.in Order # 404-3072127 double charged and no one
+                  helps. Returns were not collected and now this."
+                </div>
+              </div>
+
+              <!-- What Happened & Expected Comparison -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                <div
+                  class="p-3 rounded-lg bg-dark-secondary border border-dark-border space-y-1"
+                >
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block"
+                    >OBSERVED BEHAVIOR</span
+                  >
+                  <p class="text-brand-secondary leading-snug">
+                    Classified as
+                    <code class="font-mono text-status-error font-semibold"
+                      >delivery_delay_tracking</code
+                    >
+                    & auto-handled.
+                  </p>
+                </div>
+                <div
+                  class="p-3 rounded-lg bg-dark-secondary border border-dark-border space-y-1"
+                >
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-accent-lime block"
+                    >EXPECTED BEHAVIOR</span
+                  >
+                  <p class="text-brand-secondary leading-snug">
+                    <code class="font-mono text-accent-lime font-semibold"
+                      >payment_billing_issue</code
+                    >
+                    + mandatory human escalation.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Root Cause (Highlighted Left Border) -->
+              <div class="space-y-1 border-l-2 border-red-500/50 pl-3 py-0.5">
+                <span
+                  class="text-[10px] font-mono uppercase tracking-wider text-status-error font-semibold block"
+                  >ROOT CAUSE</span
+                >
+                <p class="text-xs text-brand-secondary leading-relaxed">
+                  Order ID regex and delivery tokens diluted the financial
+                  dispute tokens in single-label centroids, masking the urgent
+                  charge dispute.
+                </p>
+              </div>
+            </div>
+
+            <!-- Proposed Mitigation (Bottom Docked) -->
+            <div class="pt-3.5 border-t border-dark-border">
+              <div class="flex items-start gap-2 text-xs">
+                <span
+                  class="text-[10px] font-mono uppercase tracking-wider text-accent-lime font-semibold shrink-0 mt-0.5"
+                  >MITIGATION:</span
+                >
+                <p class="text-brand-secondary leading-snug text-xs">
+                  Multi-label intent detection or high-priority financial
+                  trigger regex override to force escalation.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <!-- FAIL 02: Sarcasm & Hashtag Bias (HIGH / CLASSIFICATION BIAS) -->
+          <article
+            id="fail-02"
+            class="bg-dark-surface border border-dark-border rounded-xl p-5 sm:p-6 shadow-xl space-y-4 hover:border-amber-500/40 transition-all duration-200 flex flex-col justify-between"
+          >
+            <div class="space-y-4">
+              <!-- Incident Header -->
+              <div
+                class="flex items-center justify-between pb-3 border-b border-dark-border"
+              >
+                <div class="flex items-center gap-2">
+                  <span class="font-mono font-bold text-xs text-brand-light"
+                    >FAIL 02</span
+                  >
+                  <span class="text-brand-muted">•</span>
+                  <span
+                    class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-status-warning text-[10px] font-bold tracking-wider uppercase font-mono"
+                  >
+                    <span
+                      class="w-1.5 h-1.5 rounded-full bg-status-warning"
+                    ></span>
+                    HIGH
+                  </span>
+                </div>
+                <span class="text-xs font-mono text-brand-secondary font-medium"
+                  >Sarcasm & Hashtag Bias</span
+                >
+              </div>
+
+              <!-- Customer Query (Evidence Inset) -->
+              <div class="space-y-1.5">
+                <span
+                  class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block"
+                  >CUSTOMER QUERY</span
+                >
+                <div
+                  class="bg-dark-secondary border border-dark-border rounded-lg p-3.5 text-xs text-brand-light italic leading-relaxed"
+                >
+                  "so well for amazon prime! Still waiting for my order.
+                  Disappointed #AmazonPrime"
+                </div>
+              </div>
+
+              <!-- What Happened & Expected Comparison -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                <div
+                  class="p-3 rounded-lg bg-dark-secondary border border-dark-border space-y-1"
+                >
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block"
+                    >OBSERVED BEHAVIOR</span
+                  >
+                  <p class="text-brand-secondary leading-snug">
+                    Classified as
+                    <code class="font-mono text-status-warning font-semibold"
+                      >prime_membership_benefits</code
+                    >
+                    & auto-handled.
+                  </p>
+                </div>
+                <div
+                  class="p-3 rounded-lg bg-dark-secondary border border-dark-border space-y-1"
+                >
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-accent-lime block"
+                    >EXPECTED BEHAVIOR</span
+                  >
+                  <p class="text-brand-secondary leading-snug">
+                    Delivery delay complaint with escalation intake.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Root Cause (Highlighted Left Border) -->
+              <div class="space-y-1 border-l-2 border-amber-500/50 pl-3 py-0.5">
+                <span
+                  class="text-[10px] font-mono uppercase tracking-wider text-status-warning font-semibold block"
+                  >ROOT CAUSE</span
+                >
+                <p class="text-xs text-brand-secondary leading-relaxed">
+                  Sarcasm inverted sentiment; explicit hashtag
+                  <code class="text-accent-lime font-mono">#AmazonPrime</code>
+                  heavily biased vector similarity toward subscription benefits.
+                </p>
+              </div>
+            </div>
+
+            <!-- Proposed Mitigation (Bottom Docked) -->
+            <div class="pt-3.5 border-t border-dark-border">
+              <div class="flex items-start gap-2 text-xs">
+                <span
+                  class="text-[10px] font-mono uppercase tracking-wider text-accent-lime font-semibold shrink-0 mt-0.5"
+                  >MITIGATION:</span
+                >
+                <p class="text-brand-secondary leading-snug text-xs">
+                  Strip promotional hashtags during normalization; apply
+                  contextual negation weighting.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <!-- FAIL 03: Entangled Cross-Domain Intents (MEDIUM / BOUNDARY DISPUTE) -->
+          <article
+            id="fail-03"
+            class="bg-dark-surface border border-dark-border rounded-xl p-5 sm:p-6 shadow-xl space-y-4 hover:border-blue-500/40 transition-all duration-200 flex flex-col justify-between"
+          >
+            <div class="space-y-4">
+              <!-- Incident Header -->
+              <div
+                class="flex items-center justify-between pb-3 border-b border-dark-border"
+              >
+                <div class="flex items-center gap-2">
+                  <span class="font-mono font-bold text-xs text-brand-light"
+                    >FAIL 03</span
+                  >
+                  <span class="text-brand-muted">•</span>
+                  <span
+                    class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-status-info text-[10px] font-bold tracking-wider uppercase font-mono"
+                  >
+                    <span
+                      class="w-1.5 h-1.5 rounded-full bg-status-info"
+                    ></span>
+                    MEDIUM
+                  </span>
+                </div>
+                <span class="text-xs font-mono text-brand-secondary font-medium"
+                  >Entangled Cross-Domain Intents</span
+                >
+              </div>
+
+              <!-- Customer Query (Evidence Inset) -->
+              <div class="space-y-1.5">
+                <span
+                  class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block"
+                  >CUSTOMER QUERY</span
+                >
+                <div
+                  class="bg-dark-secondary border border-dark-border rounded-lg p-3.5 text-xs text-brand-light italic leading-relaxed"
+                >
+                  "@AmazonHelp since when is Prime a week for delivery?
+                  Hmmm...."
+                </div>
+              </div>
+
+              <!-- What Happened & Expected Comparison -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                <div
+                  class="p-3 rounded-lg bg-dark-secondary border border-dark-border space-y-1"
+                >
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block"
+                    >OBSERVED BEHAVIOR</span
+                  >
+                  <p class="text-brand-secondary leading-snug">
+                    Predicted Prime benefits instead of delivery delay tracking.
+                  </p>
+                </div>
+                <div
+                  class="p-3 rounded-lg bg-dark-secondary border border-dark-border space-y-1"
+                >
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-accent-lime block"
+                    >EXPECTED BEHAVIOR</span
+                  >
+                  <p class="text-brand-secondary leading-snug">
+                    Shipping transit delay dispute.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Root Cause (Highlighted Left Border) -->
+              <div class="space-y-1 border-l-2 border-blue-500/50 pl-3 py-0.5">
+                <span
+                  class="text-[10px] font-mono uppercase tracking-wider text-status-info font-semibold block"
+                  >ROOT CAUSE</span
+                >
+                <p class="text-xs text-brand-secondary leading-relaxed">
+                  Query straddles Prime SLA terms and delivery execution;
+                  single-label classification forced an artificial winner.
+                </p>
+              </div>
+            </div>
+
+            <!-- Proposed Mitigation (Bottom Docked) -->
+            <div class="pt-3.5 border-t border-dark-border">
+              <div class="flex items-start gap-2 text-xs">
+                <span
+                  class="text-[10px] font-mono uppercase tracking-wider text-accent-lime font-semibold shrink-0 mt-0.5"
+                  >MITIGATION:</span
+                >
+                <p class="text-brand-secondary leading-snug text-xs">
+                  Dual-label composite tagging to generate hybrid SLA response.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <!-- FAIL 04: Terse Financial Query (SAFE FALLBACK / UNCERTAINTY HANDLING) -->
+          <article
+            id="fail-04"
+            class="bg-dark-surface border border-dark-border rounded-xl p-5 sm:p-6 shadow-xl space-y-4 hover:border-emerald-500/40 transition-all duration-200 flex flex-col justify-between"
+          >
+            <div class="space-y-4">
+              <!-- Incident Header -->
+              <div
+                class="flex items-center justify-between pb-3 border-b border-dark-border"
+              >
+                <div class="flex items-center gap-2">
+                  <span class="font-mono font-bold text-xs text-brand-light"
+                    >FAIL 04</span
+                  >
+                  <span class="text-brand-muted">•</span>
+                  <span
+                    class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-accent-lime text-[10px] font-bold tracking-wider uppercase font-mono"
+                  >
+                    <span
+                      class="w-1.5 h-1.5 rounded-full bg-accent-lime"
+                    ></span>
+                    SAFE FALLBACK
+                  </span>
+                </div>
+                <span class="text-xs font-mono text-brand-secondary font-medium"
+                  >Terse Financial Query</span
+                >
+              </div>
+
+              <!-- Customer Query (Evidence Inset) -->
+              <div class="space-y-1.5">
+                <span
+                  class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block"
+                  >CUSTOMER QUERY</span
+                >
+                <div
+                  class="bg-dark-secondary border border-dark-border rounded-lg p-3.5 text-xs text-brand-light italic leading-relaxed"
+                >
+                  "What is going on with my recent transaction??"
+                </div>
+              </div>
+
+              <!-- What Happened & Expected Comparison -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                <div
+                  class="p-3 rounded-lg bg-dark-secondary border border-dark-border space-y-1"
+                >
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block"
+                    >OBSERVED BEHAVIOR</span
+                  >
+                  <p class="text-brand-secondary leading-snug">
+                    Classified as
+                    <code class="font-mono text-accent-lime font-semibold"
+                      >unknown_ambiguous</code
+                    >
+                    (Confidence: 0.547 &lt; 0.58), safely escalated.
+                  </p>
+                </div>
+                <div
+                  class="p-3 rounded-lg bg-dark-secondary border border-dark-border space-y-1"
+                >
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-accent-lime block"
+                    >EXPECTED BEHAVIOR</span
+                  >
+                  <p class="text-brand-secondary leading-snug">
+                    Identify specific billing intent while escalating.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Root Cause (Highlighted Left Border) -->
+              <div
+                class="space-y-1 border-l-2 border-emerald-500/50 pl-3 py-0.5"
+              >
+                <span
+                  class="text-[10px] font-mono uppercase tracking-wider text-accent-lime font-semibold block"
+                  >ROOT CAUSE</span
+                >
+                <p class="text-xs text-brand-secondary leading-relaxed">
+                  Extreme brevity lowered similarity below 0.58 confidence
+                  threshold; safety fallback worked, but classification was
+                  coarse.
+                </p>
+              </div>
+            </div>
+
+            <!-- Proposed Mitigation (Bottom Docked) -->
+            <div class="pt-3.5 border-t border-dark-border">
+              <div class="flex items-start gap-2 text-xs">
+                <span
+                  class="text-[10px] font-mono uppercase tracking-wider text-accent-lime font-semibold shrink-0 mt-0.5"
+                  >MITIGATION:</span
+                >
+                <p class="text-brand-secondary leading-snug text-xs">
+                  Elevate prototype similarity when financial terms
+                  ('transaction') are detected.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <!-- FAIL 05: Historical Policy vs Current Reality (KNOWLEDGE DRIFT - FULL WIDTH) -->
+          <article
+            id="fail-05"
+            class="lg:col-span-2 bg-dark-surface border border-purple-500/30 rounded-xl p-5 sm:p-6 shadow-xl space-y-4 hover:border-purple-500/50 transition-all duration-200"
+          >
+            <!-- Incident Header -->
+            <div
+              class="flex items-center justify-between pb-3 border-b border-dark-border"
+            >
+              <div class="flex items-center gap-2">
+                <span class="font-mono font-bold text-xs text-brand-light"
+                  >FAIL 05</span
+                >
+                <span class="text-brand-muted">•</span>
+                <span
+                  class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-purple-500/10 border border-purple-500/30 text-purple-400 text-[10px] font-bold tracking-wider uppercase font-mono"
+                >
+                  <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                  KNOWLEDGE DRIFT
+                </span>
+              </div>
+              <span class="text-xs font-mono text-brand-secondary font-medium"
+                >Historical Policy & Workflow Drift</span
+              >
+            </div>
+
+            <!-- Customer Query (Evidence Inset) -->
+            <div class="space-y-1.5">
+              <span
+                class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block"
+                >CUSTOMER QUERY</span
+              >
+              <div
+                class="bg-dark-secondary border border-dark-border rounded-lg p-3.5 text-xs text-brand-light italic leading-relaxed"
+              >
+                "How do I return this third party seller item without a
+                printer?"
+              </div>
+            </div>
+
+            <!-- 2-Column Policy Comparison Grid: Historical Precedent vs Current Reality -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs">
+              <div
+                class="p-4 rounded-xl bg-dark-secondary border border-dark-border space-y-1.5"
+              >
+                <span
+                  class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block flex items-center gap-1.5"
+                >
+                  <i
+                    data-lucide="history"
+                    class="w-3.5 h-3.5 text-brand-muted"
+                  ></i>
+                  HISTORICAL PRECEDENT (2017 TWITTER CORPUS)
+                </span>
+                <p class="text-brand-secondary leading-relaxed">
+                  Advised the customer to DM their address so Amazon could email
+                  a printable return label PDF attachment.
+                </p>
+              </div>
+
+              <div
+                class="p-4 rounded-xl bg-dark-secondary border border-purple-500/20 space-y-1.5"
+              >
+                <span
+                  class="text-[10px] font-mono uppercase tracking-wider text-purple-400 block flex items-center gap-1.5"
+                >
+                  <i
+                    data-lucide="alert-circle"
+                    class="w-3.5 h-3.5 text-purple-400"
+                  ></i>
+                  CURRENT REALITY (OBSOLETE ADVICE)
+                </span>
+                <p class="text-brand-secondary leading-relaxed">
+                  Modern Amazon policy uses QR-code label-less drop-offs at UPS
+                  Stores / Whole Foods, making 2017 historical advice completely
+                  obsolete.
+                </p>
+              </div>
+            </div>
+
+            <!-- Architectural Insight: Historical Precedent != Current Policy -->
+            <div
+              class="bg-dark-secondary border-l-2 border-l-purple-400 p-3.5 rounded-r-xl border border-dark-border text-xs space-y-1"
+            >
+              <div class="flex items-center gap-2">
+                <span
+                  class="font-mono text-[10px] uppercase tracking-wider text-purple-400 font-bold"
+                  >CRITICAL SYSTEM LIMITATION</span
+                >
+                <span class="text-brand-muted">•</span>
+                <span class="text-brand-light font-medium"
+                  >Historical precedent &ne; current policy</span
+                >
+              </div>
+              <p class="text-brand-secondary leading-relaxed text-[11px]">
+                Grounding purely in historical resolution data carries temporal
+                latency without real-time policy overrides and freshness
+                filtering.
+              </p>
+            </div>
+
+            <!-- Mitigation -->
+            <div
+              class="pt-3 border-t border-dark-border flex items-start gap-2 text-xs"
+            >
+              <span
+                class="text-[10px] font-mono uppercase tracking-wider text-accent-lime font-semibold shrink-0 mt-0.5"
+                >MITIGATION:</span
+              >
+              <p class="text-brand-secondary leading-snug text-xs">
+                Metadata-based policy override filters and recency decay scoring
+                in the FAISS retrieval layer to suppress outdated historical
+                procedures.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ======================================================= -->
+      <!-- TAB 3: DECISION LOG (15 EXPANDABLE ACCORDION DECISIONS) -->
+      <!-- ======================================================= -->
+      <section id="tab-decisions" class="tab-content hidden space-y-7">
+        <!-- Section Header with Architectural Record Hierarchy -->
+        <div class="border-b border-dark-border pb-4 space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-accent-lime"></span>
+            <span
+              class="text-[11px] font-mono uppercase tracking-widest text-accent-lime"
+              >ENGINEERING DECISION LOG</span
+            >
+          </div>
+          <div
+            class="flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+          >
+            <div>
+              <h2
+                class="text-2xl sm:text-3xl font-extrabold text-brand-light tracking-tight flex items-baseline gap-2.5"
+              >
+                <span>Architectural Decision Records</span>
+                <span
+                  class="text-xs sm:text-sm font-mono text-brand-muted font-normal"
+                  >(15 Records)</span
+                >
+              </h2>
+              <p
+                class="text-xs sm:text-sm text-brand-secondary mt-0.5 font-normal"
+              >
+                Deliberate architectural choices, alternatives considered,
+                trade-offs, and experimental rationale.
+              </p>
+            </div>
+
+            <!-- Secondary Expand/Collapse All Button -->
+            <button
+              type="button"
+              onclick="toggleAllDecisions()"
+              id="btn-toggle-all"
+              class="self-start sm:self-auto px-3.5 py-1.5 rounded-lg bg-dark-surface border border-dark-border text-brand-secondary hover:text-brand-light hover:border-dark-borderHover text-xs font-mono font-medium transition-all flex items-center gap-2"
+            >
+              <i
+                data-lucide="chevrons-up-down"
+                class="w-3.5 h-3.5 text-brand-muted"
+              ></i>
+              <span id="toggle-all-label">Expand All</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Decision Records List (Linear/Vercel Engineering Record Timeline) -->
+        <div class="space-y-3" id="decisions-accordion">
+          <!-- 01 -->
+          <article
+            class="decision-card rounded-xl bg-dark-surface border border-dark-border overflow-hidden transition-all duration-200"
+          >
+            <button
+              type="button"
+              onclick="toggleDecision(this)"
+              class="w-full p-4 text-left flex items-center justify-between hover:bg-dark-secondary/50 transition-colors focus:outline-none"
+              aria-expanded="false"
+            >
+              <div class="flex items-center gap-3 sm:gap-4 pr-3">
+                <span
+                  class="font-mono text-accent-lime font-bold text-xs sm:text-sm w-7 shrink-0"
+                  >01</span
+                >
+                <div class="flex flex-wrap items-center gap-2">
+                  <span
+                    class="text-xs sm:text-sm font-semibold text-brand-light"
+                    >Brand Selection: @AmazonHelp over Telecom or Airlines</span
+                  >
+                  <span
+                    class="px-2 py-0.5 rounded bg-dark-secondary border border-dark-border text-[10px] font-mono text-brand-muted uppercase"
+                    >DATASET</span
+                  >
+                </div>
+              </div>
+              <i
+                data-lucide="chevron-down"
+                class="w-4 h-4 text-brand-muted shrink-0 transition-transform duration-200"
+              ></i>
+            </button>
+            <div
+              class="decision-content hidden px-5 pb-4 pt-3 border-t border-dark-border/50 bg-dark-secondary/40 space-y-3 text-xs leading-relaxed"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >DECISION</span
+                  >
+                  <p class="text-brand-secondary">
+                    Selected
+                    <code class="text-accent-lime font-mono">@AmazonHelp</code>
+                    (81,092 conversations) instead of airline or telecom
+                    handles.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >WHY / RATIONALE</span
+                  >
+                  <p class="text-brand-secondary">
+                    Retail e-commerce exhibits grounded operational intents
+                    (returns, tracking) alongside acute safety triggers
+                    (compromised accounts, OTP theft, card disputes). Airline
+                    data is heavily distorted by seasonal weather cancellations.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-accent-lime block font-semibold"
+                    >TRADE-OFF & RESULT</span
+                  >
+                  <p class="text-brand-light">
+                    High customer volume required careful deduplication and
+                    English language filtering.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 02 -->
+          <article
+            class="decision-card rounded-xl bg-dark-surface border border-dark-border overflow-hidden transition-all duration-200"
+          >
+            <button
+              type="button"
+              onclick="toggleDecision(this)"
+              class="w-full p-4 text-left flex items-center justify-between hover:bg-dark-secondary/50 transition-colors focus:outline-none"
+              aria-expanded="false"
+            >
+              <div class="flex items-center gap-3 sm:gap-4 pr-3">
+                <span
+                  class="font-mono text-accent-lime font-bold text-xs sm:text-sm w-7 shrink-0"
+                  >02</span
+                >
+                <div class="flex flex-wrap items-center gap-2">
+                  <span
+                    class="text-xs sm:text-sm font-semibold text-brand-light"
+                    >Conversation-Level Splitting over Random Tweet
+                    Shuffling</span
+                  >
+                  <span
+                    class="px-2 py-0.5 rounded bg-dark-secondary border border-dark-border text-[10px] font-mono text-status-warning uppercase"
+                    >LEAKAGE SAFETY</span
+                  >
+                </div>
+              </div>
+              <i
+                data-lucide="chevron-down"
+                class="w-4 h-4 text-brand-muted shrink-0 transition-transform duration-200"
+              ></i>
+            </button>
+            <div
+              class="decision-content hidden px-5 pb-4 pt-3 border-t border-dark-border/50 bg-dark-secondary/40 space-y-3 text-xs leading-relaxed"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >DECISION</span
+                  >
+                  <p class="text-brand-secondary">
+                    Split train/test strictly by
+                    <code class="text-accent-lime font-mono"
+                      >conversation_id</code
+                    >, completely isolating historical threads.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >WHY / RATIONALE</span
+                  >
+                  <p class="text-brand-secondary">
+                    Shuffling individual tweets leaks historical replies from
+                    the same thread into the FAISS index, invalidating test
+                    results.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-accent-lime block font-semibold"
+                    >TRADE-OFF & RESULT</span
+                  >
+                  <p class="text-brand-light">
+                    <strong class="font-mono text-accent-lime">0</strong>
+                    conversation ID overlap between training and golden test
+                    sets (verified by automated test).
+                  </p>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 03 -->
+          <article
+            class="decision-card rounded-xl bg-dark-surface border border-dark-border overflow-hidden transition-all duration-200"
+          >
+            <button
+              type="button"
+              onclick="toggleDecision(this)"
+              class="w-full p-4 text-left flex items-center justify-between hover:bg-dark-secondary/50 transition-colors focus:outline-none"
+              aria-expanded="false"
+            >
+              <div class="flex items-center gap-3 sm:gap-4 pr-3">
+                <span
+                  class="font-mono text-accent-lime font-bold text-xs sm:text-sm w-7 shrink-0"
+                  >03</span
+                >
+                <div class="flex flex-wrap items-center gap-2">
+                  <span
+                    class="text-xs sm:text-sm font-semibold text-brand-light"
+                    >Empirical Brand Taxonomy over Banking77</span
+                  >
+                  <span
+                    class="px-2 py-0.5 rounded bg-dark-secondary border border-dark-border text-[10px] font-mono text-brand-muted uppercase"
+                    >TAXONOMY</span
+                  >
+                </div>
+              </div>
+              <i
+                data-lucide="chevron-down"
+                class="w-4 h-4 text-brand-muted shrink-0 transition-transform duration-200"
+              ></i>
+            </button>
+            <div
+              class="decision-content hidden px-5 pb-4 pt-3 border-t border-dark-border/50 bg-dark-secondary/40 space-y-3 text-xs leading-relaxed"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >DECISION</span
+                  >
+                  <p class="text-brand-secondary">
+                    Derived a custom 9-intent + UNKNOWN retail taxonomy rather
+                    than forcing Banking77.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >WHY / RATIONALE</span
+                  >
+                  <p class="text-brand-secondary">
+                    Banking77 is fintech-focused (ATM fees, card PINs). Retail
+                    Twitter support is driven by physical logistics, carrier
+                    delays, and returns.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-accent-lime block font-semibold"
+                    >TRADE-OFF & RESULT</span
+                  >
+                  <p class="text-brand-light">
+                    Accurate domain taxonomy representing true retail
+                    operations.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 04 -->
+          <article
+            class="decision-card rounded-xl bg-dark-surface border border-dark-border overflow-hidden transition-all duration-200"
+          >
+            <button
+              type="button"
+              onclick="toggleDecision(this)"
+              class="w-full p-4 text-left flex items-center justify-between hover:bg-dark-secondary/50 transition-colors focus:outline-none"
+              aria-expanded="false"
+            >
+              <div class="flex items-center gap-3 sm:gap-4 pr-3">
+                <span
+                  class="font-mono text-accent-lime font-bold text-xs sm:text-sm w-7 shrink-0"
+                  >04</span
+                >
+                <div class="flex flex-wrap items-center gap-2">
+                  <span
+                    class="text-xs sm:text-sm font-semibold text-brand-light"
+                    >Compact 10-Class Taxonomy over Granular 50-Class
+                    Hierarchy</span
+                  >
+                  <span
+                    class="px-2 py-0.5 rounded bg-dark-secondary border border-dark-border text-[10px] font-mono text-brand-muted uppercase"
+                    >TAXONOMY</span
+                  >
+                </div>
+              </div>
+              <i
+                data-lucide="chevron-down"
+                class="w-4 h-4 text-brand-muted shrink-0 transition-transform duration-200"
+              ></i>
+            </button>
+            <div
+              class="decision-content hidden px-5 pb-4 pt-3 border-t border-dark-border/50 bg-dark-secondary/40 space-y-3 text-xs leading-relaxed"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >DECISION</span
+                  >
+                  <p class="text-brand-secondary">
+                    Capped taxonomy at 9 domain classes + 1 explicit unknown
+                    category.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >WHY / RATIONALE</span
+                  >
+                  <p class="text-brand-secondary">
+                    Support workflows require actionability, not hyper-fine
+                    categorization. Agents need to know whether to initiate a
+                    carrier trace or escalate to fraud.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-accent-lime block font-semibold"
+                    >TRADE-OFF & RESULT</span
+                  >
+                  <p class="text-brand-light">
+                    Prevented sparse class collapse while maintaining distinct
+                    routing outcomes.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 05 -->
+          <article
+            class="decision-card rounded-xl bg-dark-surface border border-dark-border overflow-hidden transition-all duration-200"
+          >
+            <button
+              type="button"
+              onclick="toggleDecision(this)"
+              class="w-full p-4 text-left flex items-center justify-between hover:bg-dark-secondary/50 transition-colors focus:outline-none"
+              aria-expanded="false"
+            >
+              <div class="flex items-center gap-3 sm:gap-4 pr-3">
+                <span
+                  class="font-mono text-accent-lime font-bold text-xs sm:text-sm w-7 shrink-0"
+                  >05</span
+                >
+                <div class="flex flex-wrap items-center gap-2">
+                  <span
+                    class="text-xs sm:text-sm font-semibold text-brand-light"
+                    >Explicit UNKNOWN_AMBIGUOUS Class with Rejection Threshold
+                    (0.58)</span
+                  >
+                  <span
+                    class="px-2 py-0.5 rounded bg-dark-secondary border border-dark-border text-[10px] font-mono text-accent-lime uppercase"
+                    >SAFETY REJECTION</span
+                  >
+                </div>
+              </div>
+              <i
+                data-lucide="chevron-down"
+                class="w-4 h-4 text-brand-muted shrink-0 transition-transform duration-200"
+              ></i>
+            </button>
+            <div
+              class="decision-content hidden px-5 pb-4 pt-3 border-t border-dark-border/50 bg-dark-secondary/40 space-y-3 text-xs leading-relaxed"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >DECISION</span
+                  >
+                  <p class="text-brand-secondary">
+                    Rejection threshold of
+                    <span class="font-mono text-accent-lime font-semibold"
+                      >0.58</span
+                    >
+                    routes ambiguous queries to
+                    <code class="text-accent-lime font-mono"
+                      >unknown_ambiguous</code
+                    >.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >WHY / RATIONALE</span
+                  >
+                  <p class="text-brand-secondary">
+                    Real social support messages are notoriously terse ("Still
+                    waiting.", "Hello?"). A model forced into a closed set will
+                    hallucinate an arbitrary intent with false certainty.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-accent-lime block font-semibold"
+                    >TRADE-OFF & RESULT</span
+                  >
+                  <p class="text-brand-light">
+                    Controlled uncertainty triggers safe human escalation.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 06 -->
+          <article
+            class="decision-card rounded-xl bg-dark-surface border border-dark-border overflow-hidden transition-all duration-200"
+          >
+            <button
+              type="button"
+              onclick="toggleDecision(this)"
+              class="w-full p-4 text-left flex items-center justify-between hover:bg-dark-secondary/50 transition-colors focus:outline-none"
+              aria-expanded="false"
+            >
+              <div class="flex items-center gap-3 sm:gap-4 pr-3">
+                <span
+                  class="font-mono text-accent-lime font-bold text-xs sm:text-sm w-7 shrink-0"
+                  >06</span
+                >
+                <div class="flex flex-wrap items-center gap-2">
+                  <span
+                    class="text-xs sm:text-sm font-semibold text-brand-light"
+                    >Local FAISS-CPU Search over Managed Cloud Vector DBs</span
+                  >
+                  <span
+                    class="px-2 py-0.5 rounded bg-dark-secondary border border-dark-border text-[10px] font-mono text-brand-muted uppercase"
+                    >INFRASTRUCTURE</span
+                  >
+                </div>
+              </div>
+              <i
+                data-lucide="chevron-down"
+                class="w-4 h-4 text-brand-muted shrink-0 transition-transform duration-200"
+              ></i>
+            </button>
+            <div
+              class="decision-content hidden px-5 pb-4 pt-3 border-t border-dark-border/50 bg-dark-secondary/40 space-y-3 text-xs leading-relaxed"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >DECISION</span
+                  >
+                  <p class="text-brand-secondary">
+                    Used in-memory flat inner product FAISS on normalized
+                    embeddings.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >WHY / RATIONALE</span
+                  >
+                  <p class="text-brand-secondary">
+                    Reviewers must reproduce results locally in under 15 minutes
+                    without external API credentials, cost, or network latency.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-accent-lime block font-semibold"
+                    >TRADE-OFF & RESULT</span
+                  >
+                  <p class="text-brand-light">
+                    <strong class="font-mono text-accent-lime">&lt;2ms</strong>
+                    vector query latency and 100% offline reproducibility.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 07 -->
+          <article
+            class="decision-card rounded-xl bg-dark-surface border border-dark-border overflow-hidden transition-all duration-200"
+          >
+            <button
+              type="button"
+              onclick="toggleDecision(this)"
+              class="w-full p-4 text-left flex items-center justify-between hover:bg-dark-secondary/50 transition-colors focus:outline-none"
+              aria-expanded="false"
+            >
+              <div class="flex items-center gap-3 sm:gap-4 pr-3">
+                <span
+                  class="font-mono text-accent-lime font-bold text-xs sm:text-sm w-7 shrink-0"
+                  >07</span
+                >
+                <div class="flex flex-wrap items-center gap-2">
+                  <span
+                    class="text-xs sm:text-sm font-semibold text-brand-light"
+                    >8,000 Historical Precedents Subsample</span
+                  >
+                  <span
+                    class="px-2 py-0.5 rounded bg-dark-secondary border border-dark-border text-[10px] font-mono text-brand-muted uppercase"
+                    >RETRIEVAL CORPUS</span
+                  >
+                </div>
+              </div>
+              <i
+                data-lucide="chevron-down"
+                class="w-4 h-4 text-brand-muted shrink-0 transition-transform duration-200"
+              ></i>
+            </button>
+            <div
+              class="decision-content hidden px-5 pb-4 pt-3 border-t border-dark-border/50 bg-dark-secondary/40 space-y-3 text-xs leading-relaxed"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >DECISION</span
+                  >
+                  <p class="text-brand-secondary">
+                    Subsampled 8,000 clean, unique, English conversation pairs
+                    for FAISS.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >WHY / RATIONALE</span
+                  >
+                  <p class="text-brand-secondary">
+                    Assignment explicitly encouraged subsampling:
+                    <em
+                      >"We will not run your code on the full dataset — a
+                      subsample is expected and encouraged."</em
+                    >
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-accent-lime block font-semibold"
+                    >TRADE-OFF & RESULT</span
+                  >
+                  <p class="text-brand-light">
+                    Dense semantic coverage while keeping RAM under 300MB and
+                    build time under 3 minutes.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 08 -->
+          <article
+            class="decision-card rounded-xl bg-dark-surface border border-dark-border overflow-hidden transition-all duration-200"
+          >
+            <button
+              type="button"
+              onclick="toggleDecision(this)"
+              class="w-full p-4 text-left flex items-center justify-between hover:bg-dark-secondary/50 transition-colors focus:outline-none"
+              aria-expanded="false"
+            >
+              <div class="flex items-center gap-3 sm:gap-4 pr-3">
+                <span
+                  class="font-mono text-accent-lime font-bold text-xs sm:text-sm w-7 shrink-0"
+                  >08</span
+                >
+                <div class="flex flex-wrap items-center gap-2">
+                  <span
+                    class="text-xs sm:text-sm font-semibold text-brand-light"
+                    >Independent Evidence Sufficiency Gate</span
+                  >
+                  <span
+                    class="px-2 py-0.5 rounded bg-dark-secondary border border-dark-border text-[10px] font-mono text-accent-lime uppercase"
+                    >SAFETY GATE</span
+                  >
+                </div>
+              </div>
+              <i
+                data-lucide="chevron-down"
+                class="w-4 h-4 text-brand-muted shrink-0 transition-transform duration-200"
+              ></i>
+            </button>
+            <div
+              class="decision-content hidden px-5 pb-4 pt-3 border-t border-dark-border/50 bg-dark-secondary/40 space-y-3 text-xs leading-relaxed"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >DECISION</span
+                  >
+                  <p class="text-brand-secondary">
+                    Built an explicit
+                    <code class="text-accent-lime font-mono"
+                      >EvidenceLayer</code
+                    >
+                    between retrieval and generation.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >WHY / RATIONALE</span
+                  >
+                  <p class="text-brand-secondary">
+                    Standard RAG pipelines blindly pass retrieved documents to
+                    generation. If precedents have weak similarity or
+                    conflicting resolutions, unconstrained models hallucinate
+                    policies.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-accent-lime block font-semibold"
+                    >TRADE-OFF & RESULT</span
+                  >
+                  <p class="text-brand-light">
+                    Requires top similarity &ge;
+                    <span class="font-mono text-accent-lime">0.55</span> and
+                    precedent consensus &ge;
+                    <span class="font-mono text-accent-lime">0.60</span> before
+                    permitting automated replies.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 09 -->
+          <article
+            class="decision-card rounded-xl bg-dark-surface border border-dark-border overflow-hidden transition-all duration-200"
+          >
+            <button
+              type="button"
+              onclick="toggleDecision(this)"
+              class="w-full p-4 text-left flex items-center justify-between hover:bg-dark-secondary/50 transition-colors focus:outline-none"
+              aria-expanded="false"
+            >
+              <div class="flex items-center gap-3 sm:gap-4 pr-3">
+                <span
+                  class="font-mono text-accent-lime font-bold text-xs sm:text-sm w-7 shrink-0"
+                  >09</span
+                >
+                <div class="flex flex-wrap items-center gap-2">
+                  <span
+                    class="text-xs sm:text-sm font-semibold text-brand-light"
+                    >Hardcoded Programmatic Escalation for Account Security &
+                    Disputes</span
+                  >
+                  <span
+                    class="px-2 py-0.5 rounded bg-dark-secondary border border-dark-border text-[10px] font-mono text-status-error uppercase"
+                    >MANDATORY ESCALATION</span
+                  >
+                </div>
+              </div>
+              <i
+                data-lucide="chevron-down"
+                class="w-4 h-4 text-brand-muted shrink-0 transition-transform duration-200"
+              ></i>
+            </button>
+            <div
+              class="decision-content hidden px-5 pb-4 pt-3 border-t border-dark-border/50 bg-dark-secondary/40 space-y-3 text-xs leading-relaxed"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >DECISION</span
+                  >
+                  <p class="text-brand-secondary">
+                    Strict programmatic human escalation for
+                    <code class="text-accent-lime font-mono"
+                      >account_security_login</code
+                    >
+                    and
+                    <code class="text-accent-lime font-mono"
+                      >payment_billing_issue</code
+                    >.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >WHY / RATIONALE</span
+                  >
+                  <p class="text-brand-secondary">
+                    Never allow an autonomous model to handle password resets or
+                    disputed charges. Autonomous policy promises on stolen cards
+                    pose legal liability.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-accent-lime block font-semibold"
+                    >TRADE-OFF & RESULT</span
+                  >
+                  <p class="text-brand-light">
+                    <strong class="font-mono text-accent-lime">100%</strong>
+                    deterministic escalation on sensitive domains.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 10 -->
+          <article
+            class="decision-card rounded-xl bg-dark-surface border border-dark-border overflow-hidden transition-all duration-200"
+          >
+            <button
+              type="button"
+              onclick="toggleDecision(this)"
+              class="w-full p-4 text-left flex items-center justify-between hover:bg-dark-secondary/50 transition-colors focus:outline-none"
+              aria-expanded="false"
+            >
+              <div class="flex items-center gap-3 sm:gap-4 pr-3">
+                <span
+                  class="font-mono text-accent-lime font-bold text-xs sm:text-sm w-7 shrink-0"
+                  >10</span
+                >
+                <div class="flex flex-wrap items-center gap-2">
+                  <span
+                    class="text-xs sm:text-sm font-semibold text-brand-light"
+                    >Prioritizing False Auto-Handle Rate (3.8%) over Maximizing
+                    Automation</span
+                  >
+                  <span
+                    class="px-2 py-0.5 rounded bg-dark-secondary border border-dark-border text-[10px] font-mono text-accent-lime uppercase"
+                    >SAFETY POSTURE</span
+                  >
+                </div>
+              </div>
+              <i
+                data-lucide="chevron-down"
+                class="w-4 h-4 text-brand-muted shrink-0 transition-transform duration-200"
+              ></i>
+            </button>
+            <div
+              class="decision-content hidden px-5 pb-4 pt-3 border-t border-dark-border/50 bg-dark-secondary/40 space-y-3 text-xs leading-relaxed"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >DECISION</span
+                  >
+                  <p class="text-brand-secondary">
+                    Optimized the decision policy to minimize False Auto-Handles
+                    (<span class="font-mono text-accent-lime font-semibold"
+                      >3.8%</span
+                    >) rather than maximize raw automation rate.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >WHY / RATIONALE</span
+                  >
+                  <p class="text-brand-secondary">
+                    Unnecessary human escalation costs $3; unsafe automation of
+                    a security breach or fraudulent charge costs thousands in
+                    fines and churn.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-accent-lime block font-semibold"
+                    >TRADE-OFF & RESULT</span
+                  >
+                  <p class="text-brand-light">
+                    High safety posture capturing
+                    <strong class="font-mono text-accent-lime">96.2%</strong>
+                    (51/53) of critical escalation queries.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 11 -->
+          <article
+            class="decision-card rounded-xl bg-dark-surface border border-dark-border overflow-hidden transition-all duration-200"
+          >
+            <button
+              type="button"
+              onclick="toggleDecision(this)"
+              class="w-full p-4 text-left flex items-center justify-between hover:bg-dark-secondary/50 transition-colors focus:outline-none"
+              aria-expanded="false"
+            >
+              <div class="flex items-center gap-3 sm:gap-4 pr-3">
+                <span
+                  class="font-mono text-accent-lime font-bold text-xs sm:text-sm w-7 shrink-0"
+                  >11</span
+                >
+                <div class="flex flex-wrap items-center gap-2">
+                  <span
+                    class="text-xs sm:text-sm font-semibold text-brand-light"
+                    >Emphasizing Macro F1 over Micro / Overall Accuracy</span
+                  >
+                  <span
+                    class="px-2 py-0.5 rounded bg-dark-secondary border border-dark-border text-[10px] font-mono text-brand-muted uppercase"
+                    >EVALUATION</span
+                  >
+                </div>
+              </div>
+              <i
+                data-lucide="chevron-down"
+                class="w-4 h-4 text-brand-muted shrink-0 transition-transform duration-200"
+              ></i>
+            </button>
+            <div
+              class="decision-content hidden px-5 pb-4 pt-3 border-t border-dark-border/50 bg-dark-secondary/40 space-y-3 text-xs leading-relaxed"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >DECISION</span
+                  >
+                  <p class="text-brand-secondary">
+                    Evaluated intent classification using Macro F1 as the
+                    primary metric.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >WHY / RATIONALE</span
+                  >
+                  <p class="text-brand-secondary">
+                    Class imbalance in retail Twitter is extreme (delivery
+                    tracking &gt;35%). A majority classifier achieves ~35%
+                    accuracy but near-zero Macro F1 (<span
+                      class="font-mono text-brand-light"
+                      >0.0261</span
+                    >).
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-accent-lime block font-semibold"
+                    >TRADE-OFF & RESULT</span
+                  >
+                  <p class="text-brand-light">
+                    Macro F1 penalizes models that fail on rare or sensitive
+                    categories.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 12 -->
+          <article
+            class="decision-card rounded-xl bg-dark-surface border border-dark-border overflow-hidden transition-all duration-200"
+          >
+            <button
+              type="button"
+              onclick="toggleDecision(this)"
+              class="w-full p-4 text-left flex items-center justify-between hover:bg-dark-secondary/50 transition-colors focus:outline-none"
+              aria-expanded="false"
+            >
+              <div class="flex items-center gap-3 sm:gap-4 pr-3">
+                <span
+                  class="font-mono text-accent-lime font-bold text-xs sm:text-sm w-7 shrink-0"
+                  >12</span
+                >
+                <div class="flex flex-wrap items-center gap-2">
+                  <span
+                    class="text-xs sm:text-sm font-semibold text-brand-light"
+                    >Human Validation of LLM Judge Rubric</span
+                  >
+                  <span
+                    class="px-2 py-0.5 rounded bg-dark-secondary border border-dark-border text-[10px] font-mono text-accent-lime uppercase"
+                    >VALIDATION</span
+                  >
+                </div>
+              </div>
+              <i
+                data-lucide="chevron-down"
+                class="w-4 h-4 text-brand-muted shrink-0 transition-transform duration-200"
+              ></i>
+            </button>
+            <div
+              class="decision-content hidden px-5 pb-4 pt-3 border-t border-dark-border/50 bg-dark-secondary/40 space-y-3 text-xs leading-relaxed"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >DECISION</span
+                  >
+                  <p class="text-brand-secondary">
+                    Evaluated the automated judge against 60 independent human
+                    annotations.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >WHY / RATIONALE</span
+                  >
+                  <p class="text-brand-secondary">
+                    Machine evaluators suffer from self-preference and leniency
+                    bias. Validating correlation proves the rubric reflects
+                    human engineering standards.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-accent-lime block font-semibold"
+                    >TRADE-OFF & RESULT</span
+                  >
+                  <p class="text-brand-light">
+                    Spearman correlation of
+                    <span class="font-mono text-accent-lime font-bold"
+                      >0.7632</span
+                    >
+                    (p &lt; 0.0001),
+                    <span class="font-mono text-brand-light font-bold"
+                      >81.7%</span
+                    >
+                    close agreement, and Cohen's kappa of
+                    <span class="font-mono text-accent-lime font-bold"
+                      >0.6575</span
+                    >.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 13 -->
+          <article
+            class="decision-card rounded-xl bg-dark-surface border border-dark-border overflow-hidden transition-all duration-200"
+          >
+            <button
+              type="button"
+              onclick="toggleDecision(this)"
+              class="w-full p-4 text-left flex items-center justify-between hover:bg-dark-secondary/50 transition-colors focus:outline-none"
+              aria-expanded="false"
+            >
+              <div class="flex items-center gap-3 sm:gap-4 pr-3">
+                <span
+                  class="font-mono text-accent-lime font-bold text-xs sm:text-sm w-7 shrink-0"
+                  >13</span
+                >
+                <div class="flex flex-wrap items-center gap-2">
+                  <span
+                    class="text-xs sm:text-sm font-semibold text-brand-light"
+                    >Deterministic Grounded Reply Synthesis</span
+                  >
+                  <span
+                    class="px-2 py-0.5 rounded bg-dark-secondary border border-dark-border text-[10px] font-mono text-brand-muted uppercase"
+                    >GENERATION</span
+                  >
+                </div>
+              </div>
+              <i
+                data-lucide="chevron-down"
+                class="w-4 h-4 text-brand-muted shrink-0 transition-transform duration-200"
+              ></i>
+            </button>
+            <div
+              class="decision-content hidden px-5 pb-4 pt-3 border-t border-dark-border/50 bg-dark-secondary/40 space-y-3 text-xs leading-relaxed"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >DECISION</span
+                  >
+                  <p class="text-brand-secondary">
+                    Synthesized replies by adapting verified historical
+                    precedents rather than calling external commercial LLM APIs.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >WHY / RATIONALE</span
+                  >
+                  <p class="text-brand-secondary">
+                    Commercial LLM APIs introduce non-deterministic outputs,
+                    latency (2-5s), and quota exhaustions that break reviewer
+                    test runs.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-accent-lime block font-semibold"
+                    >TRADE-OFF & RESULT</span
+                  >
+                  <p class="text-brand-light">
+                    Grounded synthesis guarantees deterministic, 100%
+                    reproducible replies in milliseconds.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 14 -->
+          <article
+            class="decision-card rounded-xl bg-dark-surface border border-dark-border overflow-hidden transition-all duration-200"
+          >
+            <button
+              type="button"
+              onclick="toggleDecision(this)"
+              class="w-full p-4 text-left flex items-center justify-between hover:bg-dark-secondary/50 transition-colors focus:outline-none"
+              aria-expanded="false"
+            >
+              <div class="flex items-center gap-3 sm:gap-4 pr-3">
+                <span
+                  class="font-mono text-accent-lime font-bold text-xs sm:text-sm w-7 shrink-0"
+                  >14</span
+                >
+                <div class="flex flex-wrap items-center gap-2">
+                  <span
+                    class="text-xs sm:text-sm font-semibold text-brand-light"
+                    >Hand-Curating Exactly 200 Golden Examples</span
+                  >
+                  <span
+                    class="px-2 py-0.5 rounded bg-dark-secondary border border-dark-border text-[10px] font-mono text-brand-muted uppercase"
+                    >GOLDEN SET</span
+                  >
+                </div>
+              </div>
+              <i
+                data-lucide="chevron-down"
+                class="w-4 h-4 text-brand-muted shrink-0 transition-transform duration-200"
+              ></i>
+            </button>
+            <div
+              class="decision-content hidden px-5 pb-4 pt-3 border-t border-dark-border/50 bg-dark-secondary/40 space-y-3 text-xs leading-relaxed"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >DECISION</span
+                  >
+                  <p class="text-brand-secondary">
+                    Built a curated set of 200 examples (within required 150-250
+                    range) stratified across 10 intents.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >WHY / RATIONALE</span
+                  >
+                  <p class="text-brand-secondary">
+                    200 examples balances statistical power (standard error &lt;
+                    3.5%) with meticulous manual review of every label and
+                    guideline.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-accent-lime block font-semibold"
+                    >TRADE-OFF & RESULT</span
+                  >
+                  <p class="text-brand-light">
+                    Balanced coverage across 10 intents, multi-turn contexts,
+                    and sensitive escalation cases.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 15 -->
+          <article
+            class="decision-card rounded-xl bg-dark-surface border border-dark-border overflow-hidden transition-all duration-200"
+          >
+            <button
+              type="button"
+              onclick="toggleDecision(this)"
+              class="w-full p-4 text-left flex items-center justify-between hover:bg-dark-secondary/50 transition-colors focus:outline-none"
+              aria-expanded="false"
+            >
+              <div class="flex items-center gap-3 sm:gap-4 pr-3">
+                <span
+                  class="font-mono text-accent-lime font-bold text-xs sm:text-sm w-7 shrink-0"
+                  >15</span
+                >
+                <div class="flex flex-wrap items-center gap-2">
+                  <span
+                    class="text-xs sm:text-sm font-semibold text-brand-light"
+                    >Clean Artifact & Customer Name Sanitization Layer</span
+                  >
+                  <span
+                    class="px-2 py-0.5 rounded bg-dark-secondary border border-dark-border text-[10px] font-mono text-accent-lime uppercase"
+                    >PRESENTATION PRIVACY</span
+                  >
+                </div>
+              </div>
+              <i
+                data-lucide="chevron-down"
+                class="w-4 h-4 text-brand-muted shrink-0 transition-transform duration-200"
+              ></i>
+            </button>
+            <div
+              class="decision-content hidden px-5 pb-4 pt-3 border-t border-dark-border/50 bg-dark-secondary/40 space-y-3 text-xs leading-relaxed"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >DECISION</span
+                  >
+                  <p class="text-brand-secondary">
+                    Automated regex sanitization stripping historical customer
+                    names ("Declan", "Dhrumil") and raw placeholders ("[URL]").
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-brand-muted block font-semibold"
+                    >WHY / RATIONALE</span
+                  >
+                  <p class="text-brand-secondary">
+                    Leaking an unrelated customer's name from 2017 into a new
+                    response violates privacy and looks unprofessional.
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] font-mono uppercase tracking-wider text-accent-lime block font-semibold"
+                    >TRADE-OFF & RESULT</span
+                  >
+                  <p class="text-brand-light">
+                    Clean, professional greetings with standard portal links
+                    (<code class="text-accent-lime font-mono"
+                      >amazon.com/orders</code
+                    >) and canonical
+                    <code class="text-accent-lime font-mono">^AH</code>
+                    sign-off.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ======================================================= -->
+      <!-- TAB 4: BENCHMARK & PROOF (HONEST, RIGOROUS EVALUATION)   -->
+      <!-- ======================================================= -->
+      <section id="tab-evaluation" class="tab-content hidden space-y-7">
+        <!-- Section Header with Crisp Hierarchy -->
+        <div class="border-b border-dark-border pb-4 space-y-1.5">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-accent-lime"></span>
+            <span
+              class="text-[11px] font-mono uppercase tracking-widest text-accent-lime"
+              >Rigorous Evaluation Report</span
+            >
+          </div>
+          <h2
+            class="text-2xl sm:text-3xl font-extrabold text-brand-light tracking-tight"
+          >
+            Benchmark & Proof
+          </h2>
+          <div class="text-xs sm:text-sm font-medium text-brand-light">
+            "Does the system actually work?"
+            <span
+              class="text-brand-secondary font-normal block sm:inline sm:ml-1 mt-0.5 sm:mt-0"
+            >
+              Evaluated on 200 hand-labelled Golden Set examples with strict
+              conversation-level isolation.
+            </span>
+          </div>
+        </div>
+
+        <!-- 4 Primary Metric Cards (State Cards: Safety 8.0%, Retrieval 0.72, Intent 0.38, Validation 0.65) -->
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch"
+        >
+          <!-- Metric 1: Safety (False Auto-Handle Rate) -->
+          <div
+            class="bg-dark-surface border border-accent-lime/40 rounded-xl p-4 sm:p-5 flex flex-col justify-between shadow-[0_0_20px_rgba(155,232,63,0.06)] hover:border-accent-lime/60 transition-all duration-200 relative overflow-hidden"
+          >
+            <div
+              class="absolute top-0 right-0 w-24 h-24 bg-accent-lime/5 rounded-full blur-2xl pointer-events-none"
+            ></div>
+            <div class="space-y-2 relative z-10">
+              <div
+                class="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider"
+              >
+                <span
+                  class="text-accent-lime font-semibold flex items-center gap-1.5"
+                >
+                  <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
+                  Safety
+                </span>
+                <span
+                  class="px-1.5 py-0.5 rounded bg-accent-lime/10 border border-accent-lime/30 text-accent-lime text-[9px]"
+                >
+                  KEY METRIC
+                </span>
+              </div>
+              <div
+                class="text-4xl lg:text-[44px] font-extrabold text-accent-lime font-mono leading-none tracking-tight py-1"
+              >
+                8.0%
+              </div>
+              <div class="space-y-1">
+                <div class="text-xs font-semibold text-brand-light font-mono">
+                  False Auto-Handle Rate
+                </div>
+                <p class="text-xs text-brand-secondary leading-snug">
+                  <span class="text-brand-muted font-mono text-[11px]"
+                    >Definition:</span
+                  >
+                  Cases incorrectly auto-handled when escalation was required
+                </p>
+              </div>
+            </div>
+            <div
+              class="pt-3.5 mt-3 border-t border-dark-border text-[11px] text-brand-muted font-mono leading-normal relative z-10"
+            >
+              <span class="text-accent-lime font-medium">Why it matters:</span>
+              Measures safety of automated decisions
+            </div>
+          </div>
+
+          <!-- Metric 2: Retrieval (0.72) -->
+          <div
+            class="bg-dark-surface border border-dark-border rounded-xl p-4 sm:p-5 flex flex-col justify-between hover:border-dark-borderHover transition-all duration-200"
+          >
+            <div class="space-y-2">
+              <div
+                class="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-brand-muted"
+              >
+                <span
+                  class="text-brand-light font-medium flex items-center gap-1.5"
+                >
+                  <i
+                    data-lucide="database"
+                    class="w-3.5 h-3.5 text-accent-lime"
+                  ></i>
+                  Retrieval
+                </span>
+                <span class="text-accent-lime/80 font-mono">Recall@5</span>
+              </div>
+              <div
+                class="text-4xl lg:text-[44px] font-extrabold text-brand-light font-mono leading-none tracking-tight py-1"
+              >
+                0.72
+              </div>
+              <div class="space-y-1">
+                <div class="text-xs font-semibold text-brand-light font-mono">
+                  Recall@5
+                </div>
+                <p class="text-xs text-brand-secondary leading-snug">
+                  <span class="text-brand-muted font-mono text-[11px]"
+                    >Definition:</span
+                  >
+                  Relevant historical cases found in top-5 results
+                </p>
+              </div>
+            </div>
+            <div
+              class="pt-3.5 mt-3 border-t border-dark-border text-[11px] text-brand-muted font-mono leading-normal"
+            >
+              <span class="text-brand-secondary">Why it matters:</span> Measures
+              evidence quality for grounded responses
+            </div>
+          </div>
+
+          <!-- Metric 3: Intent (0.38) -->
+          <div
+            class="bg-dark-surface border border-dark-border rounded-xl p-4 sm:p-5 flex flex-col justify-between hover:border-dark-borderHover transition-all duration-200"
+          >
+            <div class="space-y-2">
+              <div
+                class="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-brand-muted"
+              >
+                <span
+                  class="text-brand-light font-medium flex items-center gap-1.5"
+                >
+                  <i data-lucide="tag" class="w-3.5 h-3.5 text-accent-lime"></i>
+                  Intent
+                </span>
+                <span class="text-brand-muted font-mono">Macro F1</span>
+              </div>
+              <div
+                class="text-4xl lg:text-[44px] font-extrabold text-brand-light font-mono leading-none tracking-tight py-1"
+              >
+                0.38
+              </div>
+              <div class="space-y-1">
+                <div class="text-xs font-semibold text-brand-light font-mono">
+                  Macro F1
+                </div>
+                <p class="text-xs text-brand-secondary leading-snug">
+                  <span class="text-brand-muted font-mono text-[11px]"
+                    >Definition:</span
+                  >
+                  Harmonic mean of precision and recall across all intents
+                </p>
+              </div>
+            </div>
+            <div
+              class="pt-3.5 mt-3 border-t border-dark-border text-[11px] text-brand-muted font-mono leading-normal"
+            >
+              <span class="text-brand-secondary">Why it matters:</span> Measures
+              balanced performance across rare and common intents
+            </div>
+          </div>
+
+          <!-- Metric 4: Validation (0.65) -->
+          <div
+            class="bg-dark-surface border border-dark-border rounded-xl p-4 sm:p-5 flex flex-col justify-between hover:border-dark-borderHover transition-all duration-200"
+          >
+            <div class="space-y-2">
+              <div
+                class="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-brand-muted"
+              >
+                <span
+                  class="text-brand-light font-medium flex items-center gap-1.5"
+                >
+                  <i
+                    data-lucide="check-circle"
+                    class="w-3.5 h-3.5 text-accent-lime"
+                  ></i>
+                  Validation
+                </span>
+                <span class="text-brand-muted font-mono">&rho; Agreement</span>
+              </div>
+              <div
+                class="text-4xl lg:text-[44px] font-extrabold text-brand-light font-mono leading-none tracking-tight py-1"
+              >
+                0.65
+              </div>
+              <div class="space-y-1">
+                <div class="text-xs font-semibold text-brand-light font-mono">
+                  Judge vs Human Agreement
+                </div>
+                <p class="text-xs text-brand-secondary leading-snug">
+                  <span class="text-brand-muted font-mono text-[11px]"
+                    >Definition:</span
+                  >
+                  Spearman correlation between LLM judge and human ratings
+                </p>
+              </div>
+            </div>
+            <div
+              class="pt-3.5 mt-3 border-t border-dark-border text-[11px] text-brand-muted font-mono leading-normal"
+            >
+              <span class="text-brand-secondary">Why it matters:</span>
+              Validates automated evaluation aligns with human judgment
+            </div>
+          </div>
+        </div>
+
+        <!-- Baseline Comparison Table (Report Style) -->
+        <div
+          class="bg-dark-surface border border-dark-border rounded-xl p-5 sm:p-6 shadow-xl space-y-4"
+        >
+          <div
+            class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-dark-border pb-3"
+          >
+            <div>
+              <div class="flex items-center gap-2">
+                <span
+                  class="text-[10px] font-mono uppercase tracking-wider text-brand-muted"
+                  >System Benchmark</span
+                >
+                <span class="text-brand-muted">•</span>
+                <h3
+                  class="text-xs font-semibold text-brand-light uppercase font-mono tracking-wider"
+                >
+                  Proposed Agent vs Baselines
+                </h3>
+              </div>
+              <p class="text-[11px] text-brand-secondary mt-0.5">
+                Evaluated on identical 200 Golden Set cases. Zero test/index
+                overlap.
+              </p>
+            </div>
+            <span
+              class="text-[10px] font-mono text-brand-muted bg-dark-secondary px-2.5 py-1 rounded border border-dark-border self-start sm:self-auto"
+            >
+              N = 200 Held-Out
+            </span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table
+              class="w-full text-left text-xs font-mono border-collapse min-w-[680px]"
+            >
+              <thead>
+                <tr
+                  class="border-b border-dark-border text-brand-muted bg-dark-secondary/40"
+                >
+                  <th
+                    class="py-3 px-3.5 font-medium uppercase tracking-wider text-[11px]"
+                  >
+                    System / Model
+                  </th>
+                  <th
+                    class="py-3 px-3 font-medium uppercase tracking-wider text-[11px]"
+                  >
+                    Macro F1
+                  </th>
+                  <th
+                    class="py-3 px-3 font-medium uppercase tracking-wider text-[11px]"
+                  >
+                    Recall@5
+                  </th>
+                  <th
+                    class="py-3 px-3 font-medium uppercase tracking-wider text-[11px]"
+                  >
+                    Reply Score (0–12)
+                  </th>
+                  <th
+                    class="py-3 px-3 font-medium uppercase tracking-wider text-[11px]"
+                  >
+                    False Auto-Handle
+                  </th>
+                  <th
+                    class="py-3 px-3 font-medium uppercase tracking-wider text-[11px]"
+                  >
+                    Safety Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-dark-border/40 text-brand-light">
+                <!-- Baseline 1 (Objective / Neutral Row) -->
+                <tr class="hover:bg-dark-secondary/60 transition-colors">
+                  <td
+                    class="py-3.5 px-3.5 font-sans font-medium text-brand-secondary"
+                  >
+                    Baseline 1 (Majority Class Intent)
+                  </td>
+                  <td class="py-3.5 px-3 text-brand-secondary">0.0261</td>
+                  <td class="py-3.5 px-3 text-brand-muted">—</td>
+                  <td class="py-3.5 px-3 text-brand-secondary">
+                    9.8 / 12 (81.4%)*
+                  </td>
+                  <td class="py-3.5 px-3 text-status-error font-bold">
+                    100.0%
+                  </td>
+                  <td class="py-3.5 px-3">
+                    <span
+                      class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-red-500/10 border border-red-500/30 text-status-error text-[10px] font-medium tracking-wide"
+                    >
+                      <span
+                        class="w-1.5 h-1.5 rounded-full bg-status-error"
+                      ></span>
+                      CATASTROPHIC
+                    </span>
+                  </td>
+                </tr>
+
+                <!-- Baseline 2 (Objective / Neutral Row) -->
+                <tr class="hover:bg-dark-secondary/60 transition-colors">
+                  <td
+                    class="py-3.5 px-3.5 font-sans font-medium text-brand-secondary"
+                  >
+                    Baseline 2 (TF-IDF + Logistic Regression)
+                  </td>
+                  <td class="py-3.5 px-3 font-bold text-brand-light">0.7813</td>
+                  <td class="py-3.5 px-3 text-brand-muted">—</td>
+                  <td class="py-3.5 px-3 text-brand-secondary">
+                    10.4 / 12 (87.1%)
+                  </td>
+                  <td class="py-3.5 px-3 text-status-warning font-bold">
+                    22.6%
+                  </td>
+                  <td class="py-3.5 px-3">
+                    <span
+                      class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-status-warning text-[10px] font-medium tracking-wide"
+                    >
+                      <span
+                        class="w-1.5 h-1.5 rounded-full bg-status-warning"
+                      ></span>
+                      HIGH RISK
+                    </span>
+                  </td>
+                </tr>
+
+                <!-- Proposed Evidence-Grounded Agent (Highlighted Row with Restrained Tint & Exact Wording) -->
+                <tr
+                  class="bg-accent-lime/[0.04] border-y border-accent-lime/30 font-semibold"
+                >
+                  <td
+                    class="py-3.5 px-3.5 font-sans text-accent-lime flex items-center gap-2"
+                  >
+                    <span
+                      class="w-1.5 h-1.5 rounded-full bg-accent-lime animate-pulse"
+                    ></span>
+                    <span>Proposed Evidence-Grounded Agent</span>
+                  </td>
+                  <td class="py-3.5 px-3 text-accent-lime font-bold">0.5913</td>
+                  <td class="py-3.5 px-3 text-accent-lime">0.6950</td>
+                  <td class="py-3.5 px-3 text-accent-lime">9.0 / 12 (75.2%)</td>
+                  <td class="py-3.5 px-3 text-accent-lime font-extrabold">
+                    3.8%
+                  </td>
+                  <td class="py-3.5 px-3">
+                    <span
+                      class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-accent-lime/10 border border-accent-lime/30 text-accent-lime text-[10px] font-bold tracking-wider"
+                    >
+                      <i data-lucide="shield-check" class="w-3 h-3"></i>
+                      SAFETY-GATED / NOT PRODUCTION-READY
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Baseline Footnote with Subtle Divider -->
+          <div class="pt-3 border-t border-dark-border/60">
+            <p class="text-[11px] text-brand-muted font-mono leading-relaxed">
+              <span class="text-brand-secondary">*Baseline 1 note:</span>
+              Generic polite reply templates scored well on surface politeness,
+              but failed 100% on escalation safety by auto-handling compromised
+              accounts and card disputes without human intervention.
+            </p>
+          </div>
+        </div>
+
+        <!-- Research Insight: What is Misleading About My Headline Number? -->
+        <div
+          class="bg-dark-surface border border-accent-lime/25 rounded-xl p-5 sm:p-6 shadow-xl space-y-4"
+        >
+          <!-- Header -->
+          <div
+            class="flex items-center gap-2.5 pb-2 border-b border-dark-border/60"
+          >
+            <div class="p-1.5 rounded-lg bg-accent-lime/10 text-accent-lime">
+              <i data-lucide="lightbulb" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span
+                  class="text-[10px] font-mono text-accent-lime uppercase tracking-widest font-semibold"
+                  >RESEARCH INSIGHT</span
+                >
+                <span class="text-brand-muted">•</span>
+                <span class="text-[10px] font-mono text-brand-muted uppercase"
+                  >Engineering Analysis</span
+                >
+              </div>
+              <h3
+                class="text-sm font-bold text-brand-light uppercase tracking-wider font-mono"
+              >
+                WHAT IS MISLEADING ABOUT MY HEADLINE NUMBER?
+              </h3>
+            </div>
+          </div>
+
+          <!-- The Headline Paradox Comparison Banner -->
+          <div
+            class="bg-dark-secondary border border-dark-border rounded-xl p-4 space-y-3"
+          >
+            <div
+              class="flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+            >
+              <div>
+                <span
+                  class="text-xs font-mono font-bold text-brand-light uppercase tracking-wider block"
+                  >The Headline Paradox</span
+                >
+                <p class="text-xs text-brand-secondary mt-0.5">
+                  Looking only at Macro F1, one might assume Baseline 2 is
+                  superior. That conclusion is incomplete for customer-support
+                  automation.
+                </p>
+              </div>
+              <div class="flex items-center gap-3 shrink-0">
+                <div
+                  class="px-3 py-1.5 rounded-lg bg-dark-surface border border-dark-border font-mono text-center"
+                >
+                  <span class="text-[9px] uppercase text-brand-muted block"
+                    >Baseline 2</span
+                  >
+                  <span class="text-xs font-bold text-status-warning"
+                    >0.7813 Macro F1</span
+                  >
+                </div>
+                <div
+                  class="px-3 py-1.5 rounded-lg bg-dark-surface border border-accent-lime/30 font-mono text-center"
+                >
+                  <span class="text-[9px] uppercase text-accent-lime block"
+                    >Proposed Agent</span
+                  >
+                  <span class="text-xs font-bold text-accent-lime"
+                    >0.5913 Macro F1</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="border-l-2 border-l-accent-lime pl-3 py-0.5 text-xs text-brand-light font-medium italic leading-relaxed"
+            >
+              "The proposed system introduces explicit uncertainty rejection and
+              risk-aware escalation. Therefore closed-set Macro F1 alone does
+              not fully capture automation safety."
+            </div>
+          </div>
+
+          <!-- Two Compact Insight Cards Explaining Trade-Offs -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+            <!-- Card 1: Classification Accuracy != Customer Safety -->
+            <div
+              class="p-4 rounded-xl bg-dark-secondary border border-dark-border space-y-2"
+            >
+              <div
+                class="flex items-center gap-1.5 font-mono text-xs font-semibold text-accent-lime uppercase tracking-wider"
+              >
+                <i
+                  data-lucide="shield"
+                  class="w-3.5 h-3.5 text-accent-lime"
+                ></i>
+                <span>1. Classification Accuracy &ne; Customer Safety</span>
+              </div>
+              <p class="text-xs text-brand-secondary leading-relaxed">
+                Baseline 2 memorized n-grams, achieving higher F1 but mistakenly
+                auto-handling
+                <strong class="text-status-error font-mono font-semibold"
+                  >22.6% of sensitive escalation queries</strong
+                >
+                (unauthorized charges and account breaches). The proposed agent
+                dropped false auto-handles to
+                <strong class="text-accent-lime font-mono font-semibold"
+                  >3.8%</strong
+                >.
+              </p>
+            </div>
+
+            <!-- Card 2: Safe Rejection Can Lower Closed-Set F1 -->
+            <div
+              class="p-4 rounded-xl bg-dark-secondary border border-dark-border space-y-2"
+            >
+              <div
+                class="flex items-center gap-1.5 font-mono text-xs font-semibold text-accent-lime uppercase tracking-wider"
+              >
+                <i
+                  data-lucide="sliders"
+                  class="w-3.5 h-3.5 text-accent-lime"
+                ></i>
+                <span>2. Safe Rejection Can Lower Closed-Set F1</span>
+              </div>
+              <p class="text-xs text-brand-secondary leading-relaxed">
+                The model uses a calibrated rejection threshold (0.58). Terse or
+                ambiguous queries safely route to
+                <code class="text-accent-lime font-mono"
+                  >unknown_ambiguous</code
+                >
+                to trigger human review. Closed-set multi-class scoring
+                penalizes this safety fallback as an intent classification
+                error.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- LLM-as-Judge & Human Agreement Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <!-- 12-Point Machine Rubric (Clean 2-Column Compact Layout) -->
+          <div
+            class="bg-dark-surface border border-dark-border rounded-xl p-5 shadow-xl space-y-3.5"
+          >
+            <div
+              class="flex items-center justify-between pb-2.5 border-b border-dark-border"
+            >
+              <div class="flex items-center gap-2">
+                <i
+                  data-lucide="check-square"
+                  class="w-4 h-4 text-accent-lime"
+                ></i>
+                <h3
+                  class="text-xs font-semibold text-brand-light uppercase font-mono tracking-wider"
+                >
+                  12-Point LLM-as-Judge Rubric
+                </h3>
+              </div>
+              <span class="text-[10px] font-mono text-brand-muted"
+                >Automated Judge</span
+              >
+            </div>
+
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono"
+            >
+              <div
+                class="p-2.5 rounded-lg bg-dark-secondary border border-dark-border flex items-center justify-between"
+              >
+                <span class="text-brand-secondary">01 Intent Correctness</span>
+                <span class="text-brand-light font-bold">0–2 pts</span>
+              </div>
+              <div
+                class="p-2.5 rounded-lg bg-dark-secondary border border-dark-border flex items-center justify-between"
+              >
+                <span class="text-brand-secondary">02 Query Relevance</span>
+                <span class="text-brand-light font-bold">0–2 pts</span>
+              </div>
+              <div
+                class="p-2.5 rounded-lg bg-dark-secondary border border-dark-border flex items-center justify-between"
+              >
+                <span class="text-brand-secondary"
+                  >03 Historical Grounding</span
+                >
+                <span class="text-brand-light font-bold">0–2 pts</span>
+              </div>
+              <div
+                class="p-2.5 rounded-lg bg-dark-secondary border border-dark-border flex items-center justify-between"
+              >
+                <span class="text-brand-secondary"
+                  >04 Actionable Next Step</span
+                >
+                <span class="text-brand-light font-bold">0–2 pts</span>
+              </div>
+              <div
+                class="p-2.5 rounded-lg bg-dark-secondary border border-dark-border flex items-center justify-between"
+              >
+                <span class="text-brand-secondary"
+                  >05 Brand Tone & Sign-off</span
+                >
+                <span class="text-brand-light font-bold">0–2 pts</span>
+              </div>
+              <div
+                class="p-2.5 rounded-lg bg-dark-secondary border border-dark-border flex items-center justify-between"
+              >
+                <span class="text-brand-secondary">06 Privacy & Safety</span>
+                <span class="text-brand-light font-bold">0–2 pts</span>
+              </div>
+            </div>
+
+            <p class="text-[10px] text-brand-muted font-mono pt-1">
+              Evaluates factual groundedness, brand tone compliance, and
+              sensitive data leakage on every reply.
+            </p>
+          </div>
+
+          <!-- Human vs Judge Agreement -->
+          <div
+            class="bg-dark-surface border border-dark-border rounded-xl p-5 shadow-xl space-y-3.5"
+          >
+            <div
+              class="flex items-center justify-between pb-2.5 border-b border-dark-border"
+            >
+              <div class="flex items-center gap-2">
+                <i data-lucide="users" class="w-4 h-4 text-accent-lime"></i>
+                <h3
+                  class="text-xs font-semibold text-brand-light uppercase font-mono tracking-wider"
+                >
+                  Human vs Judge Validation
+                </h3>
+              </div>
+              <span
+                class="text-[10px] font-mono text-brand-muted bg-dark-secondary px-2 py-0.5 rounded border border-dark-border"
+              >
+                60 Annotations
+              </span>
+            </div>
+
+            <div class="space-y-2 text-xs">
+              <div
+                class="flex items-center justify-between p-2.5 rounded-lg bg-dark-secondary border border-dark-border"
+              >
+                <div class="space-y-0.5">
+                  <span class="text-brand-light font-medium block"
+                    >Spearman Rank Correlation (&rho;)</span
+                  >
+                  <span class="text-[10px] text-brand-muted font-mono"
+                    >Rank-order correlation across evaluated turns</span
+                  >
+                </div>
+                <span class="font-mono font-bold text-accent-lime text-sm"
+                  >0.7632
+                  <span class="text-[10px] text-brand-muted font-normal"
+                    >(p &lt; 0.0001)</span
+                  ></span
+                >
+              </div>
+
+              <div
+                class="flex items-center justify-between p-2.5 rounded-lg bg-dark-secondary border border-dark-border"
+              >
+                <div class="space-y-0.5">
+                  <span class="text-brand-light font-medium block"
+                    >Close Agreement Rate</span
+                  >
+                  <span class="text-[10px] text-brand-muted font-mono"
+                    >Tolerance within &plusmn;1 rubric point</span
+                  >
+                </div>
+                <span class="font-mono font-bold text-brand-light text-sm"
+                  >81.7%</span
+                >
+              </div>
+
+              <div
+                class="flex items-center justify-between p-2.5 rounded-lg bg-dark-secondary border border-dark-border"
+              >
+                <div class="space-y-0.5">
+                  <span class="text-brand-light font-medium block"
+                    >Weighted Cohen's Kappa (&kappa;)</span
+                  >
+                  <span class="text-[10px] text-brand-muted font-mono"
+                    >Chance-adjusted inter-rater agreement</span
+                  >
+                </div>
+                <span class="font-mono font-bold text-accent-lime text-sm"
+                  >0.6575
+                  <span class="text-[10px] text-brand-muted font-normal"
+                    >(Substantial)</span
+                  ></span
+                >
+              </div>
+            </div>
+
+            <div class="pt-1">
+              <p class="text-[11px] text-brand-muted font-mono leading-relaxed">
+                LLM judge validated against human annotations. Discrepancies
+                concentrated on subjective phrasing judgments.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Frontend Runtime Scripts -->
+    <script>
+      // Tab switching
+      function switchTab(tabId) {
+        document
+          .querySelectorAll(".tab-content")
+          .forEach((el) => el.classList.add("hidden"));
+        document.querySelectorAll(".nav-item").forEach((el) => {
+          el.classList.remove(
+            "text-accent-lime",
+            "bg-dark-surface",
+            "border",
+            "border-accent-lime/20",
+          );
+          el.classList.add("text-brand-secondary");
+        });
+
+        const targetSection = document.getElementById("tab-" + tabId);
+        if (targetSection) targetSection.classList.remove("hidden");
+
+        const activeNav = document.getElementById("nav-" + tabId);
+        if (activeNav) {
+          activeNav.classList.remove("text-brand-secondary");
+          activeNav.classList.add(
+            "text-accent-lime",
+            "bg-dark-surface",
+            "border",
+            "border-accent-lime/20",
+          );
+        }
+        lucide.createIcons();
+      }
+
+      // Real-World Presets Dictionary (3 Auto-Handle + 3 Escalate)
+      const PRESETS = {
+        delivery:
+          "Where is my package? It was supposed to be delivered yesterday and tracking has stopped updating.",
+        security:
+          "Someone hacked into my Amazon account, changed my email and password! Help me secure it right now!",
+        cancel: "Can you cancel my order 402-8819201 before it ships out?",
+        ambiguous:
+          "Still waiting. Nobody got back to me from yesterday. Hello??",
+        billing:
+          "Tried to add Amazon Pay Balance 2 times, both failed however charged twice from bank !!",
+        return: "I want to return my item and get a refund for my order.",
+      };
+
+      function selectPreset(btn, type) {
+        document
+          .querySelectorAll(".preset-btn")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        if (PRESETS[type]) {
+          document.getElementById("query-input").value = PRESETS[type];
+          runAnalysis();
+        }
+      }
+
+      // Sequential Pipeline Stages for Loading State
+      const PIPELINE_STAGES = [
+        "● UNDERSTANDING",
+        "● RETRIEVING",
+        "● CHECKING EVIDENCE",
+        "● GENERATING",
+        "● DECIDING",
+      ];
+
+      async function runAnalysis() {
+        const query = document.getElementById("query-input").value.trim();
+        if (!query) return;
+
+        const btn = document.getElementById("btn-analyze");
+        btn.disabled = true;
+        btn.classList.add("opacity-80");
+
+        let stageIdx = 0;
+        const stageInterval = setInterval(() => {
+          if (stageIdx < PIPELINE_STAGES.length) {
+            btn.innerHTML = `<span class="font-mono text-xs tracking-wider">${PIPELINE_STAGES[stageIdx]}</span>`;
+            stageIdx++;
+          }
+        }, 70);
+
+        try {
+          const resp = await fetch("/api/agent/analyze", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: query, conversation_context: [] }),
+          });
+
+          if (!resp.ok) throw new Error("API request failed");
+          const data = await resp.json();
+
+          setTimeout(() => {
+            clearInterval(stageInterval);
+            renderResult(data);
+            btn.disabled = false;
+            btn.classList.remove("opacity-80");
+            btn.innerHTML = `<i data-lucide="zap" class="w-4 h-4"></i> <span>Process Through Pipeline →</span>`;
+            lucide.createIcons();
+          }, 280);
+        } catch (err) {
+          clearInterval(stageInterval);
+          console.error(err);
+          btn.disabled = false;
+          btn.classList.remove("opacity-80");
+          btn.innerHTML = `<i data-lucide="zap" class="w-4 h-4"></i> <span>Process Through Pipeline →</span>`;
+          lucide.createIcons();
+          alert("API connection failed. Ensure the backend server is running.");
+        }
+      }
+
+      // Presentation Layer Cleaning of Precedents (Strip Raw Artifacts, Names, Signatures)
+      function cleanPrecedentText(text) {
+        if (!text) return "";
+        let clean = text;
+        // 1. Strip raw Twitter handles like @customer, @AmazonHelp, @115858
+        clean = clean.replace(/@\w+\s*/g, "").trim();
+        // 2. Strip historical agent signatures like ^KH, ^AH, ^KA, ^SM, ^DA
+        clean = clean.replace(/\^[A-Z]{2,}\b/g, "").trim();
+        // 3. Strip raw URLs / placeholders
+        clean = clean.replace(/\[URL\]/gi, "amazon.com/orders");
+        clean = clean.replace(/https?:\/\/\S+/gi, "amazon.com/orders");
+        // 4. Strip historical customer names in greetings/apologies: e.g. "inconvenience, Declan!" -> "inconvenience!"
+        clean = clean.replace(
+          /\b(inconvenience|trouble|delay),\s+[A-Z][a-z]+[!\.,]?/gi,
+          "$1!",
+        );
+        clean = clean.replace(
+          /\b(hi|hello|hey)\s+[A-Z][a-z]+[,!]?/gi,
+          "Hi there,",
+        );
+        clean = clean.replace(
+          /\b(unusual|unfortunate|concerning),\s+[A-Z][a-z]+[!\.,]?/gi,
+          "$1.",
+        );
+        // 5. Clean extra whitespace & dangling punctuation
+        clean = clean.replace(/\s+/g, " ").trim();
+        clean = clean.replace(/\s+([,\.!\?])/g, "$1");
+        if (clean.length > 0 && clean[0] === clean[0].toLowerCase()) {
+          clean = clean[0].toUpperCase() + clean.slice(1);
+        }
+        return clean;
+      }
+
+      function renderResult(data) {
+        // 1. Decision Status
+        const decEl = document.getElementById("res-decision");
+        const badgeEl = document.getElementById("res-badge");
+
+        decEl.innerText = data.decision;
+        if (data.decision === "AUTO_HANDLE") {
+          decEl.className =
+            "text-2xl font-extrabold text-accent-lime tracking-tight font-mono";
+          badgeEl.className =
+            "px-2.5 py-0.5 rounded text-xs font-mono font-medium border border-accent-lime/30 bg-accent-lime/10 text-accent-lime";
+          badgeEl.innerText = "Safe Automated Resolution";
+        } else {
+          decEl.className =
+            "text-2xl font-extrabold text-status-warning tracking-tight font-mono";
+          badgeEl.className =
+            "px-2.5 py-0.5 rounded text-xs font-mono font-medium border border-amber-500/30 bg-amber-500/10 text-status-warning";
+          badgeEl.innerText = "Human Review Required";
+        }
+
+        // Latency (Real Inference Latency)
+        document.getElementById("res-latency").innerText =
+          `${data.latency_ms} ms`;
+
+        // Reason Code & Policy Explanation
+        document.getElementById("res-reason-code").innerText =
+          data.decision_reason_code;
+        document.getElementById("res-reason-text").innerText =
+          data.decision_reason;
+
+        // 01 Intent Confidence
+        document.getElementById("res-intent").innerText = data.intent.label;
+        document.getElementById("res-intent").title = data.intent.label;
+        const confPct = Math.round(data.intent.confidence * 100);
+        document.getElementById("res-conf").innerText = `${confPct}%`;
+        document.getElementById("res-conf-bar").style.width = `${confPct}%`;
+
+        // 02 Evidence Sufficiency (Similarity 0.77 format, not percentage match)
+        const topSim =
+          data.evidence.length > 0
+            ? data.evidence[0].similarity.toFixed(2)
+            : "0.00";
+        const evSuffEl = document.getElementById("res-evidence-suff");
+        if (data.evidence_sufficient) {
+          evSuffEl.className =
+            "text-xs font-mono font-bold text-accent-lime mt-1 flex items-center gap-1";
+          evSuffEl.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-accent-lime"></i> <span>PASS · Similarity ${topSim}</span>`;
+        } else {
+          evSuffEl.className =
+            "text-xs font-mono font-bold text-status-warning mt-1 flex items-center gap-1";
+          evSuffEl.innerHTML = `<i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-status-warning"></i> <span>INSUFFICIENT · Sim ${topSim}</span>`;
+        }
+
+        // 03 Risk Assessment
+        const riskEl = document.getElementById("res-risk");
+        if (data.intent.label === "account_security_login") {
+          riskEl.className =
+            "text-xs font-mono font-bold text-status-error mt-1 truncate";
+          riskEl.innerText = "CRITICAL (Account Security)";
+        } else if (data.intent.label === "payment_billing_issue") {
+          riskEl.className =
+            "text-xs font-mono font-bold text-status-warning mt-1 truncate";
+          riskEl.innerText = "HIGH (Financial Dispute)";
+        } else if (data.intent.label === "unknown_ambiguous") {
+          riskEl.className =
+            "text-xs font-mono font-bold text-status-warning mt-1 truncate";
+          riskEl.innerText = "HIGH (Ambiguous Context)";
+        } else {
+          riskEl.className =
+            "text-xs font-mono font-bold text-brand-light mt-1 truncate";
+          riskEl.innerText = "LOW (Logistics Precedent)";
+        }
+
+        // Grounded Reply Draft (Clean displayed text)
+        let displayReply = data.reply;
+        // Strip raw ^AH for display to maintain clean customer-facing presentation
+        displayReply = displayReply.replace(/\^[A-Z]{2,}\b/g, "").trim();
+        document.getElementById("res-reply").innerText = displayReply;
+
+        // Grounding Badge
+        const groundBadge = document.getElementById("grounding-badge");
+        if (data.decision === "AUTO_HANDLE") {
+          groundBadge.className =
+            "text-[11px] text-accent-lime flex items-center gap-1 font-mono";
+          groundBadge.innerHTML = `<i data-lucide="shield-check" class="w-3.5 h-3.5"></i> <span>GROUNDING CHECK · PASS</span>`;
+        } else {
+          groundBadge.className =
+            "text-[11px] text-status-warning flex items-center gap-1 font-mono";
+          groundBadge.innerHTML = `<i data-lucide="shield-alert" class="w-3.5 h-3.5"></i> <span>ESCALATION INTAKE DRAFT</span>`;
+        }
+
+        // Precedents List (Cleaned Text, Strict Similarity 0.77 format)
+        const container = document.getElementById("precedents-container");
+        container.innerHTML = "";
+        document.getElementById("evidence-count").innerText =
+          `${data.evidence.length} Precedents`;
+
+        data.evidence.forEach((caseItem) => {
+          const simScore = caseItem.similarity.toFixed(2);
+          const isHighSim = caseItem.similarity >= 0.7;
+
+          // Clean customer and historical response text to strip [URL], customer names, ^KH signatures
+          const cleanCustomer = cleanPrecedentText(caseItem.customer_message);
+          const cleanResolution = cleanPrecedentText(
+            caseItem.historical_response,
+          );
+
+          const card = document.createElement("div");
+          card.className =
+            "p-3 rounded-xl bg-dark-secondary border border-dark-border hover:border-dark-borderHover transition-all space-y-1";
+          card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono text-brand-muted">
+              CASE #${caseItem.case_id.substring(0, 8)} • <span class="text-brand-light">${caseItem.intent}</span>
+            </span>
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-dark-surface border border-dark-border ${isHighSim ? "text-accent-lime" : "text-brand-muted"}">
+              Similarity ${simScore}
+            </span>
+          </div>
+          <p class="text-xs text-brand-light leading-relaxed">
+            <strong class="text-brand-muted font-normal text-[11px] font-mono uppercase mr-1">Customer:</strong> "${cleanCustomer.substring(0, 110)}..."
+          </p>
+          <p class="text-xs text-brand-secondary leading-relaxed">
+            <strong class="text-brand-muted font-normal text-[11px] font-mono uppercase mr-1">Historical Resolution:</strong> "${cleanResolution.substring(0, 130)}..."
+          </p>
+        `;
+          container.appendChild(card);
+        });
+
+        lucide.createIcons();
+      }
+
+      // Accordion Logic for Decision Log
+      function toggleDecision(btn) {
+        const card = btn.closest(".decision-card");
+        const content = card.querySelector(".decision-content");
+        const icon = card.querySelector(
+          '[data-lucide="chevron-down"], svg.lucide-chevron-down',
+        );
+
+        const isHidden = content.classList.contains("hidden");
+        if (isHidden) {
+          content.classList.remove("hidden");
+          if (icon) icon.style.transform = "rotate(180deg)";
+          card.classList.add("border-accent-lime/30");
+        } else {
+          content.classList.add("hidden");
+          if (icon) icon.style.transform = "rotate(0deg)";
+          card.classList.remove("border-accent-lime/30");
+        }
+      }
+
+      let allExpanded = false;
+      function toggleAllDecisions() {
+        allExpanded = !allExpanded;
+        const cards = document.querySelectorAll(".decision-card");
+        const toggleBtn = document.getElementById("btn-toggle-all");
+
+        cards.forEach((card) => {
+          const content = card.querySelector(".decision-content");
+          const icon = card.querySelector(
+            '[data-lucide="chevron-down"], svg.lucide-chevron-down',
+          );
+          if (allExpanded) {
+            content.classList.remove("hidden");
+            if (icon) icon.style.transform = "rotate(180deg)";
+            card.classList.add("border-accent-lime/30");
+          } else {
+            content.classList.add("hidden");
+            if (icon) icon.style.transform = "rotate(0deg)";
+            card.classList.remove("border-accent-lime/30");
+          }
+        });
+
+        toggleBtn.innerText = allExpanded ? "Collapse All" : "Expand All";
+      }
+
+      // Initial load
+      window.addEventListener("DOMContentLoaded", () => {
+        lucide.createIcons();
+        runAnalysis();
+      });
+    </script>
+  </body>
+</html>

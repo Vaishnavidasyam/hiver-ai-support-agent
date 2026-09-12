@@ -1,0 +1,25 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environments
+.env
+venv/
+env/
+ENV/
+
+# Large raw dataset files (exceeds GitHub 100MB file limit)
+archive/
+data/raw/*.parquet
+data/raw/*.zip
+data/raw/*.csv
+
+# System / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
